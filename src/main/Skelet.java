@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import controllers.SkeletController;
+
 public class Skelet{
 
 	static ServerSocket listener;
@@ -19,9 +21,12 @@ public class Skelet{
 	static BufferedReader instream;
 	static DataOutputStream outstream;
 	static boolean rm20flag = false;
+	
 
 	public static void main(String[]args) throws IOException{
 
+		SkeletController sC = new SkeletController();
+		
 		listener = new ServerSocket(portdst);
 		System.out.println("Venter på connection på port "+portdst);
 		System.out.println("Indtast eventuel portnummer som 1. argument");
@@ -34,7 +39,7 @@ public class Skelet{
 		try{
 			while(!(inline=instream.readLine().toUpperCase()).isEmpty()){//her ventes på input
 				if(inline.startsWith("RM")){
-					//ikke implimenteret
+					sC.method();
 				}
 				else if(inline.startsWith("D")){
 					if(inline.equals("DW"))
