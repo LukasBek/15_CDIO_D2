@@ -77,6 +77,7 @@ public class Skelet{
 		}
 		catch(Exception e){
 			System.out.println("Exception:"+e.getMessage());
+			e.printStackTrace();
 		}
 	}
 	public static void printmenu(){
