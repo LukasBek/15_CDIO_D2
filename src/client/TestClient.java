@@ -4,22 +4,50 @@ import java.io.*;
 import java.net.*;
 
 public class TestClient{
-	
-	public static void main(String argv[]) throws Exception{
-		
-		
-		BufferedReader inFromUser = new BufferedReader( new InputStreamReader(System.in));
+
+	public static void main(String argv[]) throws IOException{
+
+		String toWeight;
+		String fromWeight;
+		boolean run;
+
 		Socket clientSocket = new Socket("localhost", 8000);
-		String test = inFromUser.readLine();
-		
+		BufferedReader inFromUser = new BufferedReader( new InputStreamReader(System.in));
 		DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-		outToServer.writeBytes(test + '\n');
-		
-		BufferedReader inFromServer = new BufferedReader(new InputStreamReader   (clientSocket.getInputStream()));
-		String accepted = inFromServer.readLine();
-		System.out.println(""+accepted);
-		if(test == "q" || test == "Q"){
-		clientSocket.close();
+		BufferedReader inFromServer = new BufferedReader(new InputStreamReader (clientSocket.getInputStream()));
+
+		run = true;
+
+		try{
+			while(run){
+				System.out.println("Dev notice, following commands work:");
+				System.out.println("D followed by letters, for display");
+				System.out.println("DW to clean display");
+				System.out.println("T to set Tarra");
+				System.out.println("D followed by letters, for display");
+				System.out.println("S to weight your object");
+				System.out.println("B followed by the weight of what you want to weight");
+				System.out.println("Q to exit");
+				toWeight = inFromUser.readLine();
+				outToServer.writeBytes(toWeight + '\n');
+
+				if(toWeight.equals("q") || toWeight.equals("Q")){
+					run = false;
+					clientSocket.close();
+					System.in.close();
+					System.out.close();
+					outToServer.close();
+					inFromServer.close();
+					inFromUser.close();
+					System.exit(0);
+				}
+				
+				fromWeight = inFromServer.readLine();
+				System.out.println(fromWeight);	
+			}
+		}catch(Exception e){
+			System.out.println("Error: "+e.getMessage());
+			e.printStackTrace();
 		}
 	}
 }
