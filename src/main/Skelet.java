@@ -87,7 +87,7 @@ public class Skelet{
 			}
 		}
 		catch(Exception e){
-			System.out.println("Exception:"+e.getMessage());
+			System.out.println("Exception: "+e.getMessage());
 			e.printStackTrace();
 		}
 	}
