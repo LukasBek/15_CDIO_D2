@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Skelet{
@@ -20,21 +21,40 @@ public class Skelet{
 	static BufferedReader instream;
 	static DataOutputStream outstream;
 	static boolean rm20flag = false;
-	
+
+
+
 
 	public static void main(String[]args) throws IOException{
 
-//		Scanner sc = new Scanner(System.in);
+
+
+		if(args.length > 0){
+			
+			try{
+				int foo = 0;
+				foo = Integer.parseInt(args[0]);
+				if(foo> 1024 ){
+					portdst = foo;
+					System.out.println(args[0]);
+				}
+
 		
+			}	catch(InputMismatchException e){
+				System.out.println(e);
+			}
+		}
+
+
 		listener = new ServerSocket(portdst);
 		System.out.println("Venter på connection på port "+portdst);
 		System.out.println("Indtast eventuel portnummer som 1. argument");
 		System.out.println("på kommandolinien foran det port nr");
-//		System.out.println("Indtast eventuelle nye portnumer: ");
-//		portdst = sc.nextInt();	
-//		listener = new ServerSocket(portdst);
+		//		System.out.println("Indtast eventuelle nye portnumer: ");
+		//		portdst = sc.nextInt();	
+		//		listener = new ServerSocket(portdst);
 		sock = listener.accept();
-//		sc.close();
+		//		sc.close();
 		instream = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 		outstream = new DataOutputStream(sock.getOutputStream());
 
@@ -60,7 +80,7 @@ public class Skelet{
 				else if(inline.startsWith("S")){
 					printmenu();
 					outstream.writeBytes("SS"+(brutto - tara)+"kg" +"\r\n");//HVOR MANGE
-					
+
 				}
 				else if(inline.startsWith("B")){//denne ordre findes ikke på en fysisk vægt
 					String temp = inline.substring(2,inline.length());
