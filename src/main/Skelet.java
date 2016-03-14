@@ -8,8 +8,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 
-import controllers.SkeletController;
-
 public class Skelet{
 
 	static ServerSocket listener;
@@ -26,7 +24,6 @@ public class Skelet{
 
 	public static void main(String[]args) throws IOException{
 
-		SkeletController sC = new SkeletController();
 //		Scanner sc = new Scanner(System.in);
 		
 		listener = new ServerSocket(portdst);
@@ -45,7 +42,7 @@ public class Skelet{
 		try{
 			while(!(inline=instream.readLine().toUpperCase()).isEmpty()){//her ventes på input
 				if(inline.startsWith("RM")){
-					sC.method();
+					// implement this 
 				}
 				else if(inline.startsWith("D")){
 					if(inline.equals("DW"))
@@ -91,6 +88,7 @@ public class Skelet{
 			e.printStackTrace();
 		}
 	}
+
 	public static void printmenu(){
 		for(int i = 0 ; i<2 ; i++)
 			System.out.println(" ");
