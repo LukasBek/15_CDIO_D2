@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 
 import controllers.SkeletController;
 
@@ -26,12 +27,17 @@ public class Skelet{
 	public static void main(String[]args) throws IOException{
 
 		SkeletController sC = new SkeletController();
+//		Scanner sc = new Scanner(System.in);
 		
 		listener = new ServerSocket(portdst);
 		System.out.println("Venter på connection på port "+portdst);
 		System.out.println("Indtast eventuel portnummer som 1. argument");
 		System.out.println("på kommandolinien foran det port nr");
+//		System.out.println("Indtast eventuelle nye portnumer: ");
+//		portdst = sc.nextInt();	
+//		listener = new ServerSocket(portdst);
 		sock = listener.accept();
+//		sc.close();
 		instream = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 		outstream = new DataOutputStream(sock.getOutputStream());
 
