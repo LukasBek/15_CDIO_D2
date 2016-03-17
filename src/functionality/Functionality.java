@@ -11,7 +11,10 @@ public class Functionality {
 		D = new DAO();
 		
 	}
-
 	
-	
+	public void RM20_8(){
+		
+		
+		
+	}
 }
