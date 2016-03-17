@@ -12,9 +12,8 @@ public class Functionality {
 		
 	}
 	
-	public void RM20_8(){
-		
-		
-		
+	public String RM20_8(){
+		String message = "Indtast batch nummer";
+		return message;
 	}
 }

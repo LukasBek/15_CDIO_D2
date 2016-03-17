@@ -9,6 +9,8 @@ import java.net.Socket;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import functionality.Functionality;
+
 public class Skelet{
 
 	static ServerSocket listener;
@@ -22,11 +24,12 @@ public class Skelet{
 	static DataOutputStream outstream;
 	static boolean rm20flag = false;
 
-
-
+	
 
 	public static void main(String[]args) throws IOException{
-
+		
+		Functionality F = new Functionality();
+		
 		//This allows you to change the desired port the program will run on. 
 		//It will be changed when launching the program through cmd: java -jar *NameOfFile*.jar *DesiredPort (>1024)*
 		if(args.length > 0){	
@@ -53,6 +56,8 @@ public class Skelet{
 
 		printmenu();
 		try{
+			//TODO Skal ligges og køres der hvor der bliver oprettet forbindelse
+//			outstream.writeBytes(F.RM20_8());
 			while(!(inline=instream.readLine().toUpperCase()).isEmpty()){//her ventes på input
 				if(inline.startsWith("RM")){
 					// implement this 
