@@ -27,10 +27,9 @@ public class Skelet{
 
 	public static void main(String[]args) throws IOException{
 
-
-
-		if(args.length > 0){
-			
+		//This allows you to change the desired port the program will run on. 
+		//It will be changed when launching the program through cmd: java -jar *NameOfFile*.jar *DesiredPort (>1024)*
+		if(args.length > 0){	
 			try{
 				int foo = 0;
 				foo = Integer.parseInt(args[0]);
@@ -38,23 +37,17 @@ public class Skelet{
 					portdst = foo;
 					System.out.println(args[0]);
 				}
-
-		
 			}	catch(InputMismatchException e){
 				System.out.println(e);
 			}
 		}
 
-
 		listener = new ServerSocket(portdst);
+		
 		System.out.println("Venter på connection på port "+portdst);
 		System.out.println("Indtast eventuel portnummer som 1. argument");
 		System.out.println("på kommandolinien foran det port nr");
-		//		System.out.println("Indtast eventuelle nye portnumer: ");
-		//		portdst = sc.nextInt();	
-		//		listener = new ServerSocket(portdst);
 		sock = listener.accept();
-		//		sc.close();
 		instream = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 		outstream = new DataOutputStream(sock.getOutputStream());
 

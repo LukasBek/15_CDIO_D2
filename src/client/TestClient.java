@@ -20,7 +20,7 @@ public class TestClient{
 
 		try{
 			while(run){
-				System.out.println("Dev notice, following commands work:");
+				System.out.println("Following commands work:");
 				System.out.println("D followed by letters, for display");
 				System.out.println("DW to clean display");
 				System.out.println("T to set Tarra");
