@@ -32,14 +32,21 @@ public class TestClient{
 				outToServer.writeBytes(toWeight + '\n');
 
 				if(toWeight.equals("q") || toWeight.equals("Q")){
-					run = false;
-					clientSocket.close();
-					System.in.close();
-					System.out.close();
-					outToServer.close();
-					inFromServer.close();
-					inFromUser.close();
-					System.exit(0);
+					try {
+						System.out.println("Q modtaget - lukker ned");
+						clientSocket.close();
+						System.in.close();
+						System.out.close();
+						outToServer.close();
+						inFromServer.close();
+						inFromUser.close();
+						run = false;
+						System.out.println("Nedlukning færdig");
+						System.exit(0);
+					}catch(Exception e){
+						System.out.println("Fejl i nedlukningsproceduren.");
+					}
+					
 				}
 				
 				fromWeight = inFromServer.readLine();
