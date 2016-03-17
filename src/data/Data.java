@@ -1,7 +1,6 @@
 package data;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class Data {
 
@@ -13,16 +12,17 @@ public class Data {
 		for(int i = 0; i<10; i++){
 		batch.add(i);
 		weight.add((i+5)*7);
-		String s="";
-		char x = 'a';
-		Random r = new Random();
-		String alphabet = "abcdefghijklmnopqrstuvwxyz";
-		for (int j = 0 ; j<9 ; j++){
-		x = alphabet.charAt(r.nextInt(alphabet.length()));
-		s=s+x;
 		}
-		name.add(s);
-		}
+		name.add("Salt");
+		name.add("Banan");
+		name.add("Cola");
+		name.add("Paprika");
+		name.add("Sukker");
+		name.add("Fedt");
+		name.add("Galaxy s7 EDGE");
+		name.add("iPhone 7");
+		name.add("Kuglepen");
+
 	}
 	
 	public ArrayList<Integer> getBatch(){
