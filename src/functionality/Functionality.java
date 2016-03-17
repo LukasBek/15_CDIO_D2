@@ -11,15 +11,11 @@ public class Functionality {
 		D = new DAO();
 		
 	}
-	
-	public String RM20_8(){
-		String message = "Indtast batch nummer";
-		return message;
-	}
 
 	public String getBatch(int batchNumber) {
-		return "sebbySucksBigBlackDick";
-		// TODO Auto-generated method stub
-		
+		String S1 = D.getName(batchNumber).toString();
+		String S2 = Integer.toString(D.getWeight(batchNumber));
+				
+		return S1 + " " + S2;		
 	}
 }

@@ -55,11 +55,10 @@ public class Skelet{
 		try{
 			while(!(inline=instream.readLine().toUpperCase()).isEmpty()){//her ventes på input
 				if(inline.startsWith("RM")){
-					outstream.writeBytes("Virker"+"\r\n");
 					indtDisp="Indtast batchnummer";
 					printmenu();
+					outstream.writeBytes("RM20 B"+"\r\n");
 					while(!(inline=instream.readLine().toUpperCase()).isEmpty()){
-						System.out.println("Testtesttest");
 						boolean batchCheck = true;
 						while(batchCheck){
 							try{
@@ -68,7 +67,6 @@ public class Skelet{
 								String batch = fu.getBatch(batchNumber);
 								indtDisp=batch;
 								batchCheck = false;
-								inline = "nogetAndet";
 							}catch(InputMismatchException e){
 								indtDisp="";
 							}
