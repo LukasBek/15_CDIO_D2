@@ -16,4 +16,10 @@ public class Functionality {
 		String message = "Indtast batch nummer";
 		return message;
 	}
+
+	public String getBatch(int batchNumber) {
+		return "sebbySucksBigBlackDick";
+		// TODO Auto-generated method stub
+		
+	}
 }

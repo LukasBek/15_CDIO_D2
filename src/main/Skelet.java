@@ -7,8 +7,6 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.InputMismatchException;
-import java.util.Scanner;
-
 import functionality.Functionality;
 
 public class Skelet{
@@ -19,19 +17,18 @@ public class Skelet{
 	static String inline;
 	static String indtDisp ="";
 	static int portdst = 8000;
+	static int batchNumber;
 	static Socket sock;
 	static BufferedReader instream;
 	static DataOutputStream outstream;
 	static boolean rm20flag = false;
 
-	
+	static Functionality fu = new Functionality();
 
 	public static void main(String[]args) throws IOException{
-		
-		Functionality F = new Functionality();
-		
+
 		//This allows you to change the desired port the program will run on. 
-		//It will be changed when launching the program through cmd: java -jar *NameOfFile*.jar *DesiredPort (>1024)*
+		//It will be changed when launching the program through cmd: java -jar *NameOfFile*.jar *DesiredPort (>1024)* 
 		if(args.length > 0){	
 			try{
 				int foo = 0;
@@ -46,7 +43,7 @@ public class Skelet{
 		}
 
 		listener = new ServerSocket(portdst);
-		
+
 		System.out.println("Venter på connection på port "+portdst);
 		System.out.println("Indtast eventuel portnummer som 1. argument");
 		System.out.println("på kommandolinien foran det port nr");
@@ -56,11 +53,28 @@ public class Skelet{
 
 		printmenu();
 		try{
-			//TODO Skal ligges og køres der hvor der bliver oprettet forbindelse
-//			outstream.writeBytes(F.RM20_8());
 			while(!(inline=instream.readLine().toUpperCase()).isEmpty()){//her ventes på input
 				if(inline.startsWith("RM")){
-					// implement this 
+					outstream.writeBytes("Virker");
+					indtDisp="Indtast batchnummer";
+					printmenu();
+					String nyInline;
+					nyInline=instream.readLine();
+					System.out.println(nyInline);
+//					while(!(nyInline=instream.readLine().toUpperCase().isEmpty())){
+//						System.out.println("Testtesttest");
+//						boolean batchCheck = true;
+//						while(batchCheck){
+//							try{
+//								batchNumber = Integer.parseInt(nyInline);
+//								String batch = fu.getBatch(batchNumber);
+//								indtDisp=batch;
+//								batchCheck = false;
+//							}catch(InputMismatchException e){
+//								indtDisp="";
+//							}
+//						}
+//					}
 				}
 				else if(inline.startsWith("D")){
 					if(inline.equals("DW"))
