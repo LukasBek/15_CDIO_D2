@@ -55,26 +55,25 @@ public class Skelet{
 		try{
 			while(!(inline=instream.readLine().toUpperCase()).isEmpty()){//her ventes på input
 				if(inline.startsWith("RM")){
-					outstream.writeBytes("Virker");
+					outstream.writeBytes("Virker"+"\r\n");
 					indtDisp="Indtast batchnummer";
 					printmenu();
-					String nyInline;
-					nyInline=instream.readLine();
-					System.out.println(nyInline);
-//					while(!(nyInline=instream.readLine().toUpperCase().isEmpty())){
-//						System.out.println("Testtesttest");
-//						boolean batchCheck = true;
-//						while(batchCheck){
-//							try{
-//								batchNumber = Integer.parseInt(nyInline);
-//								String batch = fu.getBatch(batchNumber);
-//								indtDisp=batch;
-//								batchCheck = false;
-//							}catch(InputMismatchException e){
-//								indtDisp="";
-//							}
-//						}
-//					}
+					while(!(inline=instream.readLine().toUpperCase()).isEmpty()){
+						System.out.println("Testtesttest");
+						boolean batchCheck = true;
+						while(batchCheck){
+							try{
+								outstream.writeBytes("RM20 A"+"\r\n");
+								batchNumber = Integer.parseInt(inline);
+								String batch = fu.getBatch(batchNumber);
+								indtDisp=batch;
+								batchCheck = false;
+								inline = "nogetAndet";
+							}catch(InputMismatchException e){
+								indtDisp="";
+							}
+						}break;
+					}printmenu();
 				}
 				else if(inline.startsWith("D")){
 					if(inline.equals("DW"))
