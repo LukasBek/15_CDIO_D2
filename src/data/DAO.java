@@ -51,4 +51,12 @@ public class DAO {
 	public void removeElement(int index){
 		D.removeElement(index);
 	}
+	/**
+	 * Gets the sice of the object array
+	 * @return sice of object array
+	 */
+	public int getSice(){
+		return D.getSize();
+	}
+	
 }
