@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.InputMismatchException;
+import java.util.Scanner;
+
 import functionality.Functionality;
 
 public class Skelet{
@@ -23,7 +25,9 @@ public class Skelet{
 	static DataOutputStream outstream;
 	static boolean rm20flag = false;
 
+
 	static Functionality fu = new Functionality();
+	static Scanner sc = new Scanner(System.in);
 
 	public static void main(String[]args) throws IOException{
 
@@ -58,19 +62,19 @@ public class Skelet{
 					indtDisp="Indtast batchnummer";
 					printmenu();
 					outstream.writeBytes("RM20 B"+"\r\n");
-					while(!(inline=instream.readLine().toUpperCase()).isEmpty()){
-						boolean batchCheck = true;
-						while(batchCheck){
-							try{
-								outstream.writeBytes("RM20 A"+"\r\n");
-								batchNumber = Integer.parseInt(inline);
-								String batch = fu.getBatch(batchNumber);
-								indtDisp=batch;
-								batchCheck = false;
-							}catch(InputMismatchException e){
-								indtDisp="";
-							}
-						}break;
+
+					boolean batchCheck = true;
+					while(batchCheck){
+						try{
+							batchNumber = sc.nextInt();
+							outstream.writeBytes("RM20 A"+"\r\n");
+							String batch = fu.getBatch(batchNumber);
+							indtDisp=batch;
+							batchCheck = false;
+						}catch(InputMismatchException e){
+							indtDisp="";
+
+						}
 					}printmenu();
 				}
 				else if(inline.startsWith("D")){

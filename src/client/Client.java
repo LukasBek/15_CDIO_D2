@@ -3,7 +3,7 @@ package client;
 import java.io.*;
 import java.net.*;
 
-public class TestClient{
+public class Client{
 
 	public static void main(String argv[]) throws IOException{
 
@@ -21,6 +21,7 @@ public class TestClient{
 		try{
 			while(run){
 				System.out.println("Following commands work:");
+				System.out.println("RM to do the RM20 order");
 				System.out.println("D followed by letters, for display");
 				System.out.println("DW to clean display");
 				System.out.println("T to set Tarra");
