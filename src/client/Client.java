@@ -43,13 +43,12 @@ public class Client{
 				System.out.println("D followed by letters, for display");
 				System.out.println("DW to clean display");
 				System.out.println("T to set Tarra");
-				System.out.println("D followed by letters, for display");
 				System.out.println("S to weight your object");
 				System.out.println("B followed by the weight of what you want to weight");
 				System.out.println("Q to exit");
 				toWeight = inFromUser.readLine();
-				outToServer.writeBytes(toWeight + '\n');
 
+				outToServer.writeBytes(toWeight + '\n');
 				if(toWeight.startsWith("RM") || toWeight.startsWith("rm")){
 					fromWeight = inFromServer.readLine();
 					System.out.println(fromWeight);
@@ -72,7 +71,7 @@ public class Client{
 					}
 
 				}
-
+				
 				fromWeight = inFromServer.readLine();
 				System.out.println(fromWeight);	
 			}
