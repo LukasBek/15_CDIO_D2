@@ -6,9 +6,11 @@ import java.util.InputMismatchException;
 
 public class Client{
 	
-	static int portnummer;
+	static int portnummer = 8000;
 
 	public static void main(String argv[]) throws IOException{
+		
+		
 		
 		if(argv.length > 0){	
 			try{
