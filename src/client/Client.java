@@ -2,16 +2,32 @@ package client;
 
 import java.io.*;
 import java.net.*;
+import java.util.InputMismatchException;
 
 public class Client{
+	
+	static int portnummer;
 
 	public static void main(String argv[]) throws IOException{
+		
+		if(argv.length > 0){	
+			try{
+				int foo = 0;
+				foo = Integer.parseInt(argv[0]);
+				if(foo> 1024 ){
+					portnummer = foo;
+					System.out.println(argv[0]);
+				}
+			}	catch(InputMismatchException e){
+				System.out.println(e);
+			}
+		}
 
 		String toWeight;
 		String fromWeight;
 		boolean run;
 
-		Socket clientSocket = new Socket("localhost", 8000);
+		Socket clientSocket = new Socket("localhost", portnummer);
 		BufferedReader inFromUser = new BufferedReader( new InputStreamReader(System.in));
 		DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
 		BufferedReader inFromServer = new BufferedReader(new InputStreamReader (clientSocket.getInputStream()));
