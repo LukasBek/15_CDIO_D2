@@ -27,7 +27,6 @@ public class Skelet{
 
 
 	static Functionality fu = new Functionality();
-	static Scanner sc = new Scanner(System.in);
 
 	public static void main(String[]args) throws IOException{
 
@@ -65,6 +64,7 @@ public class Skelet{
 
 					boolean batchCheck = true;
 					while(batchCheck){
+						Scanner sc = new Scanner(System.in);
 						try{
 							batchNumber = sc.nextInt();
 							outstream.writeBytes("RM20 A"+"\r\n");
@@ -73,6 +73,7 @@ public class Skelet{
 							batchCheck = false;
 						}catch(InputMismatchException e){
 							indtDisp="";
+							sc.close();
 
 						}
 					}printmenu();

@@ -32,6 +32,11 @@ public class Client{
 				toWeight = inFromUser.readLine();
 				outToServer.writeBytes(toWeight + '\n');
 
+				if(toWeight.startsWith("RM") || toWeight.startsWith("rm")){
+					fromWeight = inFromServer.readLine();
+					System.out.println(fromWeight);
+				}
+
 				if(toWeight.equals("q") || toWeight.equals("Q")){
 					try {
 						System.out.println("Q modtaget - lukker ned");
@@ -47,9 +52,9 @@ public class Client{
 					}catch(Exception e){
 						System.out.println("Fejl i nedlukningsproceduren.");
 					}
-					
+
 				}
-				
+
 				fromWeight = inFromServer.readLine();
 				System.out.println(fromWeight);	
 			}
