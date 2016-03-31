@@ -9,7 +9,7 @@ public class Data {
 	public Data(boolean choice){
 
 		if (choice){
-			int[] batchData = {1,2,3,4,5,6,7,8,9};
+			int[] batchData = {11,21,31,41,51,61,71,81,91};
 			int[] weightData = {100,200,300,400,500,600,700,800,900};
 			String[] nameData = {"Banan", "Guagamole", "Fanatic", "Kaffe", "JAVA", "Hest", "Ko", "Hane", "SOLE"};
 
