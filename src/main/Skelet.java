@@ -80,7 +80,11 @@ public class Skelet{
 					if(inline.equals("DW"))
 						indtDisp="";
 					else
+						try{
 						indtDisp=(inline.substring(2,inline.length()));//her skal anførselstegn
+						}catch(StringIndexOutOfBoundsException e){
+							indtDisp="";
+						}
 					printmenu();
 					outstream.writeBytes("DB"+"\r\n");
 				}
@@ -95,7 +99,11 @@ public class Skelet{
 
 				}
 				else if(inline.startsWith("B")){//denne ordre findes ikke på en fysisk vægt
+					try{
 					String temp = inline.substring(2,inline.length());
+					}catch(StringIndexOutOfBoundsException e){
+						
+					}
 					brutto = Double.parseDouble(temp);
 					printmenu();
 					outstream.writeBytes("DB "+"\r\n");
