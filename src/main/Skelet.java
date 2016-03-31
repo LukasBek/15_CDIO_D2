@@ -101,10 +101,12 @@ public class Skelet{
 				else if(inline.startsWith("B")){//denne ordre findes ikke på en fysisk vægt
 					try{
 					String temp = inline.substring(2,inline.length());
-					}catch(StringIndexOutOfBoundsException e){
-						
-					}
 					brutto = Double.parseDouble(temp);
+				}catch(StringIndexOutOfBoundsException e){
+					brutto = 0;
+				}catch(NumberFormatException e){
+					indtDisp = "Forkert vægtinput";
+				}
 					printmenu();
 					outstream.writeBytes("DB "+"\r\n");
 				}
