@@ -73,8 +73,6 @@ public class Skelet{
 							batchCheck = false;
 						}catch(InputMismatchException e){
 							indtDisp="";
-							sc.close();
-
 						}
 					}printmenu();
 				}
@@ -110,6 +108,7 @@ public class Skelet{
 					instream.close();
 					outstream.close();
 					System.exit(0);
+					
 				}
 				else{
 					printmenu();
