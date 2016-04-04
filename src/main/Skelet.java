@@ -68,7 +68,7 @@ public class Skelet{
 						
 						try{
 							batchNumber = sc.nextInt();
-							outstream.writeBytes("RM20 A"+"\r\n");
+							outstream.writeBytes("RM20 A"+ " batchNumber"+"\r\n");
 							String batch = fu.getBatch(batchNumber);
 							indtDisp=batch;
 							batchCheck = false;
