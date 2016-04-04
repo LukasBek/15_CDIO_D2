@@ -25,7 +25,8 @@ public class Skelet{
 	static DataOutputStream outstream;
 	static boolean rm20flag = false;
 
-
+	static Scanner sc = new Scanner(System.in);
+	
 	static Functionality fu = new Functionality();
 
 	public static void main(String[]args) throws IOException{
@@ -64,7 +65,7 @@ public class Skelet{
 
 					boolean batchCheck = true;
 					while(batchCheck){
-						Scanner sc = new Scanner(System.in);
+						
 						try{
 							batchNumber = sc.nextInt();
 							outstream.writeBytes("RM20 A"+"\r\n");
@@ -115,6 +116,7 @@ public class Skelet{
 					System.out.println("Program stoppet Q modtaget på com port");
 					System.in.close();
 					System.out.close();
+					sc.close();
 					instream.close();
 					outstream.close();
 					System.exit(0);
