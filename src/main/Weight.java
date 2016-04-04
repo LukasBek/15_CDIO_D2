@@ -82,7 +82,7 @@ public class Weight{
 						indtDisp="";
 					else
 						try{
-						indtDisp=(inline.substring(2,inline.length()));//her skal anførselstegn
+						indtDisp=(inline.substring(2, 9));//her skal anførselstegn
 						}catch(StringIndexOutOfBoundsException e){
 							indtDisp="";
 						}
