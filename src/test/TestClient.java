@@ -38,8 +38,6 @@ public class TestClient{
 
 		outToServer.writeBytes("D Test" + "\r\n");
 		outToServer.flush();
-		outToServer.writeBytes("D Test2" + "\r\n");
-		outToServer.flush();
 		String expectedAnswer = "DB";
 		String actualAnswer = inFromServer.readLine();
 		
@@ -50,28 +48,81 @@ public class TestClient{
 	public void DWCommand(){
 		
 		try {
-			outToServer.writeBytes("D Test" + "\r\n");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
+			outToServer.writeBytes("DW" + "\r\n");
 			outToServer.flush();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println("Hej");
-		String expectedAnswer = "DB";
-		String actualAnswer = null;
-		try {
-			actualAnswer = inFromServer.readLine();
+
+			String expectedAnswer = "DB";
+			String actualAnswer = inFromServer.readLine();
+			assertEquals(expectedAnswer, actualAnswer);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		assertEquals(expectedAnswer, actualAnswer);
+	}
+	@Test
+	public void TCommand(){
+		
+		try {
+			outToServer.writeBytes("T" + "\r\n");
+			outToServer.flush();
+
+			String expectedAnswer = "TS0.0kg";
+			String actualAnswer = inFromServer.readLine();
+			assertEquals(expectedAnswer, actualAnswer);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	@Test
+	public void SCommand(){
+		
+		try {
+			outToServer.writeBytes("S" + "\r\n");
+			outToServer.flush();
+
+			String expectedAnswer = "SS0.0kg";
+			String actualAnswer = inFromServer.readLine();
+			assertEquals(expectedAnswer, actualAnswer);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	@Test
+	public void BCommand(){
+		
+		try {
+			outToServer.writeBytes("B 2" + "\r\n");
+			outToServer.flush();
+
+			String expectedAnswer = "DB ";
+			String actualAnswer = inFromServer.readLine();
+			assertEquals(expectedAnswer, actualAnswer);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	@Test
+	public void RMCommand(){
+		
+		try {
+			outToServer.writeBytes("RM" + "\r\n");
+			outToServer.flush();
+
+			String expectedAnswer = "RM20 B";
+			String actualAnswer = inFromServer.readLine();
+			assertEquals(expectedAnswer, actualAnswer);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 }
 
