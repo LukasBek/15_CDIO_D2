@@ -11,7 +11,7 @@ import java.util.Scanner;
 
 import functionality.Functionality;
 
-public class Skelet{
+public class Weight{
 
 	static ServerSocket listener;
 	static double brutto=0;
