@@ -23,8 +23,7 @@ public class Weight{
 	static Socket sock;
 	static BufferedReader instream;
 	static DataOutputStream outstream;
-	static boolean rm20flag = false;
-
+	
 	static Scanner sc = new Scanner(System.in);
 	
 	static Functionality fu = new Functionality();
