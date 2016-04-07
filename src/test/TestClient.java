@@ -92,7 +92,7 @@ public class TestClient{
 			outToServer.writeBytes("B 2" + "\r\n");
 			outToServer.flush();
 
-			String expectedAnswer = "DB ";
+			String expectedAnswer = "DB";
 			String actualAnswer = inFromServer.readLine();
 			assertEquals(expectedAnswer, actualAnswer);
 		} catch (IOException e) {
@@ -102,28 +102,13 @@ public class TestClient{
 		
 	}
 	@Test
-	public void RMCommand(){
-		
-		try {
-			outToServer.writeBytes("RM" + "\r\n");
-			outToServer.flush();
-
-			String expectedAnswer = "RM20 B";
-			String actualAnswer = inFromServer.readLine();
-			assertEquals(expectedAnswer, actualAnswer);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}	@Test
 	public void wrongCommand(){
 		
 		try {
-			outToServer.writeBytes("QWERTY" + "\r\n");
+			outToServer.writeBytes("WERTY" + "\r\n");
 			outToServer.flush();
 
-			String expectedAnswer = null;
+			String expectedAnswer = "ES";
 			String actualAnswer = inFromServer.readLine();
 			assertEquals(expectedAnswer, actualAnswer);
 		} catch (IOException e) {

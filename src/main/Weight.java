@@ -68,7 +68,7 @@ public class Weight{
 						
 						try{
 							batchNumber = sc.nextInt();
-							outstream.writeBytes("RM20 A"+ " batchNumber"+"\r\n");
+							outstream.writeBytes("RM20 A "+ batchNumber+"\r\n");
 							String batch = fu.getBatch(batchNumber);
 							indtDisp=batch;
 							batchCheck = false;
@@ -109,7 +109,7 @@ public class Weight{
 					indtDisp = "Forkert vægtinput";
 				}
 					printmenu();
-					outstream.writeBytes("DB "+"\r\n");
+					outstream.writeBytes("DB"+"\r\n");
 				}
 				else if((inline.startsWith("Q"))){
 					System.out.println("");
@@ -124,7 +124,7 @@ public class Weight{
 				}
 				else{
 					printmenu();
-					outstream.writeBytes("ES "+" \r\n");
+					outstream.writeBytes("ES"+"\r\n");
 				}
 			}
 		}
