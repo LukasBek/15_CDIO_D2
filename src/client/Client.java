@@ -10,8 +10,7 @@ public class Client{
 
 	public static void main(String argv[]) throws IOException{
 		
-		
-		
+		//Making it possible to change to portnumber
 		if(argv.length > 0){	
 			try{
 				int foo = 0;
@@ -29,6 +28,7 @@ public class Client{
 		String fromWeight;
 		boolean run;
 
+		//Creates connection to the weight
 		Socket clientSocket = new Socket("localhost", portnummer);
 		BufferedReader inFromUser = new BufferedReader( new InputStreamReader(System.in));
 		DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
@@ -36,24 +36,30 @@ public class Client{
 
 		run = true;
 
+		//The main program being run as long as "run" is true
 		try{
 			while(run){
 				System.out.println("Following commands work:");
 				System.out.println("RM to do the RM20 order");
 				System.out.println("D followed by letters, for display");
-				System.out.println("DW to clean display");
+				System.
+				out.println("DW to clean display");
 				System.out.println("T to set Tarra");
 				System.out.println("S to weight your object");
 				System.out.println("B followed by the weight of Lukas tiny dick");
 				System.out.println("Q to exit");
 				toWeight = inFromUser.readLine();
 
+				//sends input to weight
 				outToServer.writeBytes(toWeight + '\n');
+				
+				//the client will receive to inputs before being able to send it again during RM
 				if(toWeight.startsWith("RM") || toWeight.startsWith("rm")){
 					fromWeight = inFromServer.readLine();
 					System.out.println(fromWeight);
 				}
 
+				//after having sent the q, the client itself will shutdown
 				if(toWeight.equals("q") || toWeight.equals("Q")){
 					try {
 						System.out.println("Q modtaget - lukker ned");
@@ -72,6 +78,7 @@ public class Client{
 
 				}
 				
+				//Receives input from weight
 				fromWeight = inFromServer.readLine();
 				System.out.println(fromWeight);	
 			}
