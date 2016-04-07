@@ -25,13 +25,6 @@ public class TestClient{
 		}
 	}
 	
-	
-	public TestClient() throws IOException{
-		
-		
-	}
-	
-	
 	//Kør serveren først
 	@Test
 	public void DCommand() throws IOException{
@@ -116,6 +109,21 @@ public class TestClient{
 			outToServer.flush();
 
 			String expectedAnswer = "RM20 B";
+			String actualAnswer = inFromServer.readLine();
+			assertEquals(expectedAnswer, actualAnswer);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}	@Test
+	public void wrongCommand(){
+		
+		try {
+			outToServer.writeBytes("QWERTY" + "\r\n");
+			outToServer.flush();
+
+			String expectedAnswer = null;
 			String actualAnswer = inFromServer.readLine();
 			assertEquals(expectedAnswer, actualAnswer);
 		} catch (IOException e) {
