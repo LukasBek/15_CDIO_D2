@@ -7,8 +7,8 @@ public class DAO {
 	private Data D;
 
 	public DAO(){
-	// Hvis der bruges "true" i konstrukt�ren laves der et standart array
-	// der kan arbejdes med, hvis der inds�ttes "false" er dette array tomt.
+	// Hvis der bruges "true" i konstruktæren laves der et standart array
+	// der kan arbejdes med, hvis der indsættes "false" er dette array tomt.
 		D = new Data(true);
 	}
 	/**
