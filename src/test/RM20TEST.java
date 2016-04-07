@@ -32,7 +32,7 @@ public class RM20TEST {
 	
 	
 	@Test
-	public void RMCommand(){
+	public void RMCommand1(){
 		
 		try {
 			outToServer.writeBytes("RM" + "\r\n");
@@ -49,15 +49,15 @@ public class RM20TEST {
 	}
 	@Test
 	public void RMCommand2(){
-	try {
-		//Indtast først batchnummer 2 i serveren
-
-		String expectedAnswer = "RM20 A " + "";
-		String actualAnswer = inFromServer.readLine();
-		assertEquals(expectedAnswer, actualAnswer);
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+		try {
+			//Indtast først batchnummer 2 i serveren
+			
+			String expectedAnswer = "RM20 A " + "2";
+			String actualAnswer = inFromServer.readLine();
+			assertEquals(expectedAnswer, actualAnswer);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
