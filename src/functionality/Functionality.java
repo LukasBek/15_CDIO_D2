@@ -26,4 +26,5 @@ public class Functionality {
 				
 		return S1 + " " + S2;		
 	}
+	
 }

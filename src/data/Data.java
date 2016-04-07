@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Data {
 
 	private ArrayList<Element> data = new ArrayList<Element>();
-
+	
 	public Data(boolean choice){
 
 		if (choice){
@@ -20,7 +20,7 @@ public class Data {
 			}
 		}
 	}
-
+	
 	public void addElement(int batch, int weight, String name){
 		Element Stuff = new Element(batch, weight, name);
 		data.add(Stuff);

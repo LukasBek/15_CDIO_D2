@@ -7,8 +7,8 @@ public class DAO {
 	private Data D;
 
 	public DAO(){
-	// Hvis der bruges "true" i konstruktøren laves der et standart array
-	// der kan arbejdes med, hvis der indsættes "false" er dette array tomt.
+	// Hvis der bruges "true" i konstruktï¿½ren laves der et standart array
+	// der kan arbejdes med, hvis der indsï¿½ttes "false" er dette array tomt.
 		D = new Data(true);
 	}
 	/**
@@ -58,5 +58,6 @@ public class DAO {
 	public int getSice(){
 		return D.getSize();
 	}
+	
 	
 }
