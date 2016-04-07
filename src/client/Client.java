@@ -46,7 +46,7 @@ public class Client{
 				out.println("DW to clean display");
 				System.out.println("T to set Tarra");
 				System.out.println("S to weight your object");
-				System.out.println("B followed by the weight of Sebby tiny dick");
+				System.out.println("B followed by the weight of the item you want to weigh");
 				System.out.println("Q to exit");
 				toWeight = inFromUser.readLine();
 
