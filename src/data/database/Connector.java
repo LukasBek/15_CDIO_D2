@@ -8,7 +8,6 @@ import java.sql.Statement;
 
 import data.daointerface.DALException;
 
-
 public class Connector
 {
 	/**
@@ -27,46 +26,51 @@ public class Connector
 	 */
 	public static Connection connectToDatabase(String url, String username, String password)
 			throws InstantiationException, IllegalAccessException,
-					ClassNotFoundException, SQLException
+			ClassNotFoundException, SQLException
 	{
 		// call the driver class' no argument constructor
 		Class.forName("com.mysql.jdbc.Driver").newInstance();
-		
+
 		// get Connection-object via DriverManager
-		return (Connection) DriverManager.getConnection(url, username, password);
+		return (Connection) DriverManager.getConnection("jdbc:mysql://ec2-52-30-89-247.eu-west-1.compute.amazonaws.com:3306/grp15", "grp15", "grp15");
 	}
-	
+
 	private static Connection conn;
 	private static Statement stm;
-	
+
 	public Connector(String server, int port, String database,
 			String username, String password)
-				throws InstantiationException, IllegalAccessException,
+					throws InstantiationException, IllegalAccessException,
 					ClassNotFoundException, SQLException
 	{
 		conn	= connectToDatabase("jdbc:mysql://"+server+":"+port+"/"+database,
-					username, password);
+				username, password);
+
 		stm		= conn.createStatement();
 	}
-	
+
 	public Connector() throws InstantiationException, IllegalAccessException,
-			ClassNotFoundException, SQLException
+	ClassNotFoundException, SQLException
 	{
 		this(Constant.server, Constant.port, Constant.database,
 				Constant.username, Constant.password);
+
 	}
-	
-	public static ResultSet doQuery(String cmd) throws DALException
+
+	public ResultSet doQuery(String cmd) throws DALException
 	{
+		
+		System.out.println(cmd);
+		
 		try { return stm.executeQuery(cmd); }
 		catch (SQLException e) { throw new DALException(e); }
 	}
-	
-	public static int doUpdate(String cmd) throws DALException
+
+	public int doUpdate(String cmd) throws DALException
 	{
 		try { return stm.executeUpdate(cmd); }
 		catch (SQLException e) { throw new DALException(e); }
 	}
-	
-	
+
+
 }

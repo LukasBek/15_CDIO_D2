@@ -18,7 +18,7 @@ public class OperatoerDTO implements Serializable{
 	/** Operatør password min. 7 max. 8 karakterer */
 	String password;
 	/** The operators admin status. TRUE = admin, FALSE = not dmin */
-	boolean admin;
+	int admin;
 
 
 	public OperatoerDTO() {
@@ -75,11 +75,11 @@ public class OperatoerDTO implements Serializable{
 		this.password = password;
 	} 
 
-	public boolean getAdminStatus(){
+	public int getAdminStatus(){
 		return admin;
 	}
 
-	public void setAdminStatus(boolean admin){
+	public void setAdminStatus(int admin){
 		this.admin = admin;
 	}
 

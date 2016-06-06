@@ -24,7 +24,7 @@ public class SQLWeightDAO implements WeightDAO {
 	@Override
 	public void addWeight(WeightDTO w) throws DALException {
 		connector.doUpdate(
-				"INSERT INTO weight(weight, o_id) VALUES "
+				"INSERT INTO weight(weight, opr_id) VALUES "
 						+"(" + w.getMS() + ", " + w.getopID() + ")"
 				);
 	}
@@ -37,7 +37,7 @@ public class SQLWeightDAO implements WeightDAO {
 			while (rs.next()){
 				WeightDTO weightDTO = new WeightDTO();
 				weightDTO.setMS(rs.getDouble("weight"));
-				weightDTO.setopID(rs.getInt("o_id"));
+				weightDTO.setopID(rs.getInt("opr_id"));
 				weightDTO.setWID(rs.getInt("w_id"));
 				list.add(weightDTO);
 			}
