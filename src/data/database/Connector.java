@@ -59,9 +59,6 @@ public class Connector
 
 	public ResultSet doQuery(String cmd) throws DALException
 	{
-		
-		System.out.println(cmd);
-		
 		try { return stm.executeQuery(cmd); }
 		catch (SQLException e) { throw new DALException(e); }
 	}

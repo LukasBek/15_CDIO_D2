@@ -25,8 +25,6 @@ public class Weight{
 	static DataOutputStream outstream;
 	
 	static Scanner sc = new Scanner(System.in);
-	
-	static Functionality fu = new Functionality();
 
 	public static void main(String[]args) throws IOException{
 
