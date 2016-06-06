@@ -9,7 +9,6 @@ import java.net.Socket;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import functionality.Functionality;
 
 public class Weight{
 
@@ -66,8 +65,8 @@ public class Weight{
 						try{
 							batchNumber = sc.nextInt();
 							outstream.writeBytes("RM20 A "+ batchNumber+"\r\n");
-							String batch = fu.getBatch(batchNumber);
-							indtDisp=batch;
+//							String batch = fu.getBatch(batchNumber);
+//							indtDisp=batch;
 							batchCheck = false;
 						}catch(InputMismatchException e){
 							indtDisp="";
