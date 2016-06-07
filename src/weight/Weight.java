@@ -9,6 +9,10 @@ import java.net.Socket;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import data.daoimpl.SQLOperatoerDAO;
+import data.daoimpl.SQLWeightDAO;
+import data.daointerface.DALException;
+
 
 public class Weight{
 
@@ -22,7 +26,7 @@ public class Weight{
 	static Socket sock;
 	static BufferedReader instream;
 	static DataOutputStream outstream;
-	
+
 	static Scanner sc = new Scanner(System.in);
 
 	public static void main(String[]args) throws IOException{
@@ -51,82 +55,89 @@ public class Weight{
 		instream = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 		outstream = new DataOutputStream(sock.getOutputStream());
 
-		printmenu();
-		try{
-			while(!(inline=instream.readLine().toUpperCase()).isEmpty()){//her ventes på input
-				if(inline.startsWith("RM")){
-					indtDisp="Indtast batchnummer";
-					printmenu();
-					outstream.writeBytes("RM20 B"+"\r\n");
+		SQLOperatoerDAO odao = new SQLOperatoerDAO();
+		SQLWeightDAO wdao = new SQLWeightDAO();
+		loginMethods lm = new loginMethods(odao);
 
-					boolean batchCheck = true;
-					while(batchCheck){
-						
-						try{
-							batchNumber = sc.nextInt();
-							outstream.writeBytes("RM20 A "+ batchNumber+"\r\n");
-//							String batch = fu.getBatch(batchNumber);
-//							indtDisp=batch;
-							batchCheck = false;
-						}catch(InputMismatchException e){
+		if(!lm.login()){
+			outstream.writeBytes("Problem occured during login");
+		}else{
+			printmenu();
+			try{
+				while(!(inline=instream.readLine().toUpperCase()).isEmpty()){//her ventes på input
+					if(inline.startsWith("RM")){
+						indtDisp="Indtast batchnummer";
+						printmenu();
+						outstream.writeBytes("RM20 B"+"\r\n");
+
+						boolean batchCheck = true;
+						while(batchCheck){
+
+							try{
+								batchNumber = sc.nextInt();
+								outstream.writeBytes("RM20 A "+ batchNumber+"\r\n");
+
+								batchCheck = false;
+							}catch(InputMismatchException e){
+								indtDisp="";
+							}
+						}printmenu();
+					}
+					else if(inline.startsWith("D")){
+						if(inline.equals("DW"))
 							indtDisp="";
-						}
-					}printmenu();
-				}
-				else if(inline.startsWith("D")){
-					if(inline.equals("DW"))
-						indtDisp="";
-					else
+						else
+							try{
+								indtDisp=(inline.substring(2, inline.length()));//her skal anførselstegn
+							}catch(StringIndexOutOfBoundsException e){
+								indtDisp="";
+							}
+						printmenu();
+						outstream.writeBytes("DB"+"\r\n");
+					}
+					else if(inline.startsWith("T")){
+						outstream.writeBytes("TS"+(tara)+"kg"+"\r\n"); //HVOR MANGE SPACE?
+						tara=brutto;
+						printmenu();
+					}
+					else if(inline.startsWith("S")){
+						printmenu();
+						outstream.writeBytes("SS"+(brutto - tara)+"kg" +"\r\n");//HVOR MANGE
+
+					}
+					else if(inline.startsWith("B")){//denne ordre findes ikke på en fysisk vægt
 						try{
-						indtDisp=(inline.substring(2, 9));//her skal anførselstegn
+							String temp = inline.substring(2,inline.length());
+							brutto = Double.parseDouble(temp);
 						}catch(StringIndexOutOfBoundsException e){
-							indtDisp="";
+							brutto = 0;
+						}catch(NumberFormatException e){
+							indtDisp = "Forkert vægtinput";
 						}
-					printmenu();
-					outstream.writeBytes("DB"+"\r\n");
-				}
-				else if(inline.startsWith("T")){
-					outstream.writeBytes("TS"+(tara)+"kg"+"\r\n"); //HVOR MANGE SPACE?
-					tara=brutto;
-					printmenu();
-				}
-				else if(inline.startsWith("S")){
-					printmenu();
-					outstream.writeBytes("SS"+(brutto - tara)+"kg" +"\r\n");//HVOR MANGE
+						printmenu();
+						outstream.writeBytes("DB"+"\r\n");
+					}
+					else if((inline.startsWith("Q"))){
+						System.out.println("");
+						System.out.println("Program stoppet Q modtaget på com port");
+						System.in.close();
+						System.out.close();
+						sc.close();
+						instream.close();
+						outstream.close();
+						System.exit(0);
 
-				}
-				else if(inline.startsWith("B")){//denne ordre findes ikke på en fysisk vægt
-					try{
-					String temp = inline.substring(2,inline.length());
-					brutto = Double.parseDouble(temp);
-				}catch(StringIndexOutOfBoundsException e){
-					brutto = 0;
-				}catch(NumberFormatException e){
-					indtDisp = "Forkert vægtinput";
-				}
-					printmenu();
-					outstream.writeBytes("DB"+"\r\n");
-				}
-				else if((inline.startsWith("Q"))){
-					System.out.println("");
-					System.out.println("Program stoppet Q modtaget på com port");
-					System.in.close();
-					System.out.close();
-					sc.close();
-					instream.close();
-					outstream.close();
-					System.exit(0);
-					
-				}
-				else{
-					printmenu();
-					outstream.writeBytes("ES"+"\r\n");
+					}
+					else{
+						printmenu();
+						outstream.writeBytes("ES"+"\r\n");
+					}
 				}
 			}
-		}
-		catch(Exception e){
-			System.out.println("Exception: "+e.getMessage());
-			e.printStackTrace();
+			catch(Exception e){
+				System.out.println("Exception: "+e.getMessage());
+				e.printStackTrace();
+			}
 		}
 	}
 

@@ -4,15 +4,17 @@ import java.io.*;
 import java.net.*;
 import java.util.InputMismatchException;
 import java.util.Scanner;
-import data.daoimpl.SQLOperatoerDAO;
-import data.daointerface.DALException;
+
 
 public class Client{
 
 	static int portnummer = 8000;
-	SQLOperatoerDAO odao = new SQLOperatoerDAO();
+	private boolean login = false;
 
 	public static void main(String argv[]) throws IOException{
+		
+		Client client = new Client();
+		
 		//Making it possible to change to portnumber
 		if(argv.length > 0){	
 			try{
@@ -26,11 +28,8 @@ public class Client{
 				System.out.println(e);
 			}
 		}
-		Client client = new Client();
-		System.out.println("Please login to use the weight application");
-		if(client.login()){
-			client.run();
-		}
+		
+		client.run();
 	}
 
 	private void run(){
@@ -38,6 +37,8 @@ public class Client{
 		String toWeight;
 		String fromWeight;
 		boolean run;
+		
+		Scanner sc = new Scanner(System.in);		
 
 		//Creates connection to the weight
 		Socket clientSocket = null;
@@ -55,6 +56,11 @@ public class Client{
 			System.out.println("Unable to establish connection to weight");
 		}
 
+		System.out.println("Please login to use the weight application");
+		while(!(login(sc, outToServer, inFromServer)));
+		;
+		
+		
 		run = true;
 
 		//The main program being run as long as "run" is true
@@ -86,6 +92,7 @@ public class Client{
 						clientSocket.close();
 						System.in.close();
 						System.out.close();
+						sc.close();
 						outToServer.close();
 						inFromServer.close();
 						inFromUser.close();
@@ -108,53 +115,33 @@ public class Client{
 		}
 	}
 
-	private boolean login(){
-		int id = 0;
+	private void login(Scanner sc, DataOutputStream outToServer, BufferedReader inFromServer) {
+		int id = -1;
 		String password;
-
-		Scanner sc = new Scanner(System.in);
-		System.out.println("Enter your id below:");
+		System.out.println("Enter your ID below:");
 		try{
 			id = sc.nextInt();
 		}catch(InputMismatchException e){
-			System.out.println("Please enter a legit number (between 1-999999:");
-			login();
+			System.out.println("Please enter a valid ID (from 1-999999");
+			login(sc, outToServer, inFromServer);
 		}
-		System.out.println("Enter your password below:");
+		System.out.println("Enter your passwor below:");
 		password = sc.next();
-
-		if(correctUserPassword(id, password)){
-			return true;
-		}else{
-			System.out.println("Wrong login, try again");
-			if(login()){
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public boolean correctUserPassword(int iD, String password){
-		int index = -1;	
+		
 		try {
-			for (int i = 1 ; i < odao.getOperatoerList().size(); i++){
-				if (iD == odao.getOperatoer(i).getOprId()){			
-					index = i;	
-					break;				
-				}		
-			}
-		} catch (DALException e){
-			
-		}
-		try {
-			if(odao.getOperatoer(index).getPassword().equals(password)){
-				return true;
+			outToServer.writeInt(id);
+			outToServer.writeBytes(password );
+			if(inFromServer.readLine().equals("correct")){
+				login = true;
+			}else if(inFromServer.readLine().equals("false")){
+				System.out.println("Wrong login, try again");
 			}else{
-				return false;
+				System.out.println("error in login (clientside)");
 			}
-		} catch (DALException e) {
-			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return false;
 	}
+
 }

@@ -59,22 +59,4 @@ public class SQLOperatoerDAO implements OperatoerDAO {
 		}
 		return list;
 	}
-
-	public void createOperatoer(OperatoerDTO opr) throws DALException {
-		connector.doUpdate(
-				"INSERT INTO operatoer(opr_id, opr_navn, ini, cpr, password, admin) VALUES "
-						+"(" + opr.getOprId() + ", '" + opr.getOprNavn() + "', '" + opr.getIni() + "', '" + opr.getCpr() + 
-						"', '" + opr.getPassword() + "', " + opr.getAdminStatus() + ")"
-				);
-
-	}
-
-	public void updateOperatoer(OperatoerDTO opr) throws DALException {
-		connector.doUpdate(
-				"UPDATE operatoer SET name = '" + opr.getOprNavn() + "', ini = '" + opr.getIni() + "', cpr = '" 
-						+ opr.getCpr() + "', password = '" + opr.getPassword() + "', admin = " + opr.getAdminStatus() + " WHERE opr_id = "
-						+ 	opr.getOprId()			
-				);
-
-	}
 }
