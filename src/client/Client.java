@@ -10,6 +10,7 @@ public class Client{
 
 	static int portnummer = 8000;
 	private boolean login = false;
+	Scanner sc;
 
 	public static void main(String argv[]) throws IOException{
 		
@@ -37,18 +38,16 @@ public class Client{
 		String toWeight;
 		String fromWeight;
 		boolean run;
-		
-		Scanner sc = new Scanner(System.in);		
-
+	
 		//Creates connection to the weight
 		Socket clientSocket = null;
 		BufferedReader inFromUser = null;
-		DataOutputStream outToServer = null;
+		PrintWriter outToServer = null;
 		BufferedReader inFromServer = null;
 		try{
 			clientSocket = new Socket("localhost", portnummer);
 			inFromUser = new BufferedReader( new InputStreamReader(System.in));
-			outToServer = new DataOutputStream(clientSocket.getOutputStream());
+			outToServer = new PrintWriter(clientSocket.getOutputStream());
 			inFromServer = new BufferedReader(new InputStreamReader (clientSocket.getInputStream()));
 		}catch(UnknownHostException e1) {
 			System.out.println("Unable to establish connection to weight");
@@ -57,9 +56,9 @@ public class Client{
 		}
 
 		System.out.println("Please login to use the weight application");
-		while(!(login(sc, outToServer, inFromServer)));
-		;
-		
+		while(!login){
+			login(outToServer, inFromServer);
+		}
 		
 		run = true;
 
@@ -77,7 +76,7 @@ public class Client{
 				toWeight = inFromUser.readLine();
 
 				//sends input to weight
-				outToServer.writeBytes(toWeight + '\n');
+				outToServer.println(toWeight);
 
 				//the client will receive to inputs before being able to send it again during RM
 				if(toWeight.startsWith("RM") || toWeight.startsWith("rm")){
@@ -115,33 +114,40 @@ public class Client{
 		}
 	}
 
-	private void login(Scanner sc, DataOutputStream outToServer, BufferedReader inFromServer) {
-		int id = -1;
+	private void login(PrintWriter outToServer, BufferedReader inFromServer) {
+		sc = new Scanner(System.in);		
+		
+		int id;
 		String password;
+		String fromServer = null;
+		
 		System.out.println("Enter your ID below:");
 		try{
 			id = sc.nextInt();
 		}catch(InputMismatchException e){
-			System.out.println("Please enter a valid ID (from 1-999999");
-			login(sc, outToServer, inFromServer);
+			System.out.println("Please enter a valid ID (1-99999)");
+			return;
 		}
-		System.out.println("Enter your passwor below:");
+		System.out.println("Enter your password below:");
 		password = sc.next();
 		
 		try {
-			outToServer.writeInt(id);
-			outToServer.writeBytes(password );
-			if(inFromServer.readLine().equals("correct")){
+			outToServer.println(id);
+			outToServer.println(password);
+			outToServer.flush();
+			
+			fromServer = inFromServer.readLine();
+			
+			if(fromServer.equals("succes")){
 				login = true;
-			}else if(inFromServer.readLine().equals("false")){
+			}else if(fromServer.equals("failure")){
 				System.out.println("Wrong login, try again");
+				login(outToServer, inFromServer);
 			}else{
 				System.out.println("error in login (clientside)");
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
 }
