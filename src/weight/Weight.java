@@ -10,8 +10,8 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import data.daoimpl.SQLOperatoerDAO;
-//import data.daoimpl.SQLWeightDAO;
-//import data.daointerface.DALException;
+import data.daoimpl.SQLWeightDAO;
+import data.daointerface.DALException;
 
 
 public class Weight{
@@ -21,8 +21,10 @@ public class Weight{
 	static double tara = 0;
 	static String inline;
 	static String indtDisp ="";
+	static String opOnline ="";
 	static int portdst = 8000;
 	static int batchNumber;
+	static int id = -1;
 	static Socket sock;
 	static BufferedReader instream;
 	static DataOutputStream outstream;
@@ -56,33 +58,34 @@ public class Weight{
 		outstream = new DataOutputStream(sock.getOutputStream());
 
 		SQLOperatoerDAO odao = new SQLOperatoerDAO();
-//		SQLWeightDAO wdao = new SQLWeightDAO();
+		SQLWeightDAO wdao = new SQLWeightDAO();
 		loginMethods lm = new loginMethods(odao);
 
 		boolean loggedIn = false;
 
 		while (!loggedIn){
-			int id = -1;
+			id = -1;
 			String password = null;
 
 			String sid = instream.readLine();
 			id = Integer.parseInt(sid);
-			
+
 			password = instream.readLine();			
-			
+
 			if(!lm.correctUserPassword(id, password)){
 				outstream.writeBytes("failure" + "\r\n");
 			}else{
 				loggedIn = true;
 				outstream.writeBytes("succes" + "\r\n");
+				indtDisp = "Welcome";
 			}
 		}
-		printmenu();
+		printmenu(odao, id);
 		try{
 			while(!(inline=instream.readLine().toUpperCase()).isEmpty()){//her ventes på input
 				if(inline.startsWith("RM")){
 					indtDisp="Indtast batchnummer";
-					printmenu();
+					printmenu(odao, id);
 					outstream.writeBytes("RM20 B"+"\r\n");
 
 					boolean batchCheck = true;
@@ -91,12 +94,14 @@ public class Weight{
 						try{
 							batchNumber = sc.nextInt();
 							outstream.writeBytes("RM20 A "+ batchNumber+"\r\n");
+							
+							
 
 							batchCheck = false;
 						}catch(InputMismatchException e){
 							indtDisp="";
 						}
-					}printmenu();
+					}printmenu(odao, id);
 				}
 				else if(inline.startsWith("D")){
 					if(inline.equals("DW"))
@@ -107,16 +112,16 @@ public class Weight{
 						}catch(StringIndexOutOfBoundsException e){
 							indtDisp="";
 						}
-					printmenu();
+					printmenu(odao, id);
 					outstream.writeBytes("DB"+"\r\n");
 				}
 				else if(inline.startsWith("T")){
 					outstream.writeBytes("TS"+(tara)+"kg"+"\r\n"); //HVOR MANGE SPACE?
 					tara=brutto;
-					printmenu();
+					printmenu(odao, id);
 				}
 				else if(inline.startsWith("S")){
-					printmenu();
+					printmenu(odao, id);
 					outstream.writeBytes("SS"+(brutto - tara)+"kg" +"\r\n");//HVOR MANGE
 
 				}
@@ -129,7 +134,7 @@ public class Weight{
 					}catch(NumberFormatException e){
 						indtDisp = "Forkert vægtinput";
 					}
-					printmenu();
+					printmenu(odao, id);
 					outstream.writeBytes("DB"+"\r\n");
 				}
 				else if((inline.startsWith("Q"))){
@@ -144,7 +149,7 @@ public class Weight{
 
 				}
 				else{
-					printmenu();
+					printmenu(odao, id);
 					outstream.writeBytes("ES"+"\r\n");
 				}
 			}
@@ -156,28 +161,34 @@ public class Weight{
 
 	}
 
-	public static void printmenu(){
-		for(int i = 0 ; i<2 ; i++)
+	public static void printmenu(SQLOperatoerDAO odao, int id){
+		for(int i = 0 ; i<2 ; i++){
 			System.out.println(" ");
-		System.out.println("*************************************************");
-		System.out.println("Netto: "+(brutto - tara)+" kg" );
-		System.out.println("Instruktions display: "+ indtDisp );
-		System.out.println("*************************************************");
-		System.out.println(" ");
-		System.out.println(" ");
-		System.out.println("Debug info: ");
-		System.out.println("Hooked up to"+sock.getInetAddress() );
-		System.out.println("Brutto: "+(brutto)+" kg" );
-		System.out.println("Streng modtaget: "+inline) ;
-		System.out.println(" ");
-		System.out.println("Denne vægt simulator lytter på ordrene ");
-		System.out.println("S, T, D'TEST', DW, RM20 8....,BogQ ");
-		System.out.println("på kommunikation sporten. ");
-		System.out.println("******") ;
-		System.out.println("Tast T for tara (svarende til knap tryk på vægt)");
-		System.out.println("Tast B for ny brutto (svarende til at belastningen på vægt ændres)");
-		System.out.println("Tast Q for at afslutte program program");
-		System.out.println("Indtast (T/B/Q for knap tryk/bruttoændring/quit)");
-		System.out.print ("Tast her:");
+			System.out.println("*************************************************");
+			System.out.println("Netto: "+(brutto - tara)+" kg" );
+			System.out.println("Instruktions display: "+ indtDisp );
+			try {
+				System.out.println(odao.getOperatoer(id).getOprNavn());
+			} catch (DALException e) {
+				e.printStackTrace();
+			}
+			System.out.println("*************************************************");
+			System.out.println(" ");
+			System.out.println(" ");
+			System.out.println("Debug info: ");
+			System.out.println("Hooked up to"+sock.getInetAddress() );
+			System.out.println("Brutto: "+(brutto)+" kg" );
+			System.out.println("Streng modtaget: "+inline) ;
+			System.out.println(" ");
+			System.out.println("Denne vægt simulator lytter på ordrene ");
+			System.out.println("S, T, D'TEST', DW, RM20 8....,BogQ ");
+			System.out.println("på kommunikation sporten. ");
+			System.out.println("******") ;
+			System.out.println("Tast T for tara (svarende til knap tryk på vægt)");
+			System.out.println("Tast B for ny brutto (svarende til at belastningen på vægt ændres)");
+			System.out.println("Tast Q for at afslutte program program");
+			System.out.println("Indtast (T/B/Q for knap tryk/bruttoændring/quit)");
+			System.out.print ("Tast her:");
+		}
 	}
 }

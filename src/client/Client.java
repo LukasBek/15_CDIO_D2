@@ -77,6 +77,7 @@ public class Client{
 
 				//sends input to weight
 				outToServer.println(toWeight);
+				outToServer.flush();
 
 				//the client will receive to inputs before being able to send it again during RM
 				if(toWeight.startsWith("RM") || toWeight.startsWith("rm")){
