@@ -14,7 +14,7 @@ public class loginMethods {
 	public boolean correctUserPassword(int id, String password){
 		int index = -1;	
 		try {
-			for (int i = 1 ; i < odao.getOperatoerList().size(); i++){
+			for (int i = 1 ; i <= odao.getOperatoerList().size(); i++){
 				if (id == odao.getOperatoer(i).getOprId()){			
 					index = i;	
 					break;				

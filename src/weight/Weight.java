@@ -10,8 +10,11 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import data.daoimpl.SQLOperatoerDAO;
+import data.daoimpl.SQLProduktBatchDAO;
+//import data.daoimpl.SQLReceptDAO;
 import data.daoimpl.SQLWeightDAO;
 import data.daointerface.DALException;
+import data.dto.ProduktBatchDTO;
 
 
 public class Weight{
@@ -21,7 +24,7 @@ public class Weight{
 	static double tara = 0;
 	static String inline;
 	static String indtDisp ="";
-	static String opOnline ="";
+	static String extraDisp ="";
 	static int portdst = 8000;
 	static int batchNumber;
 	static int id = -1;
@@ -58,7 +61,8 @@ public class Weight{
 		outstream = new DataOutputStream(sock.getOutputStream());
 
 		SQLOperatoerDAO odao = new SQLOperatoerDAO();
-		SQLWeightDAO wdao = new SQLWeightDAO();
+		SQLProduktBatchDAO pbdao = new SQLProduktBatchDAO();
+		//		SQLReceptDAO rdao = new SQLReceptDAO();
 		loginMethods lm = new loginMethods(odao);
 
 		boolean loggedIn = false;
@@ -78,6 +82,11 @@ public class Weight{
 				loggedIn = true;
 				outstream.writeBytes("succes" + "\r\n");
 				indtDisp = "Welcome";
+				try {
+					extraDisp = odao.getOperatoer(id).getOprNavn();
+				} catch (DALException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		printmenu(odao, id);
@@ -94,8 +103,40 @@ public class Weight{
 						try{
 							batchNumber = sc.nextInt();
 							outstream.writeBytes("RM20 A "+ batchNumber+"\r\n");
-							
-							
+							ProduktBatchDTO pb = new ProduktBatchDTO();
+							pb = pbdao.getProduktBatch(batchNumber);
+//							pb.setOprId(id);
+//							pb.setPbId(batchNumber);
+// TODO this
+//							pbdao.createProduktBatch(pb);
+
+							//							extraDisp = rdao.getRecept(pbdao.getProduktBatch(batchNumber).getReceptId()).getReceptName();
+							indtDisp = "Place your container on the weight and then reset the scaling";
+							printmenu(odao, id);
+
+							while(!(inline=instream.readLine().toUpperCase()).isEmpty()){
+								if(inline.startsWith("B")){
+									try{
+										String temp = inline.substring(2,inline.length());
+										brutto = Double.parseDouble(temp);
+									}catch(StringIndexOutOfBoundsException e){
+										brutto = 0;
+									}catch(NumberFormatException e){
+										indtDisp = "Forkert vægtinput";
+									}
+									printmenu(odao, id);
+									outstream.writeBytes("DB"+"\r\n");
+								}else if (inline.startsWith("T")){
+									outstream.writeBytes("TS"+(tara)+"kg"+"\r\n"); 
+									tara=brutto;
+									pb.setStatus(1);
+									pbdao.updateProduktBatch(pb);
+									printmenu(odao, id);
+								}else{
+									printmenu(odao, id);
+									outstream.writeBytes("ES"+"\r\n");
+								}
+							}
 
 							batchCheck = false;
 						}catch(InputMismatchException e){
@@ -116,13 +157,13 @@ public class Weight{
 					outstream.writeBytes("DB"+"\r\n");
 				}
 				else if(inline.startsWith("T")){
-					outstream.writeBytes("TS"+(tara)+"kg"+"\r\n"); //HVOR MANGE SPACE?
+					outstream.writeBytes("TS"+(tara)+"kg"+"\r\n"); 
 					tara=brutto;
 					printmenu(odao, id);
 				}
 				else if(inline.startsWith("S")){
 					printmenu(odao, id);
-					outstream.writeBytes("SS"+(brutto - tara)+"kg" +"\r\n");//HVOR MANGE
+					outstream.writeBytes("SS"+(brutto - tara)+"kg" +"\r\n");
 
 				}
 				else if(inline.startsWith("B")){//denne ordre findes ikke på en fysisk vægt
@@ -167,11 +208,7 @@ public class Weight{
 			System.out.println("*************************************************");
 			System.out.println("Netto: "+(brutto - tara)+" kg" );
 			System.out.println("Instruktions display: "+ indtDisp );
-			try {
-				System.out.println(odao.getOperatoer(id).getOprNavn());
-			} catch (DALException e) {
-				e.printStackTrace();
-			}
+			System.out.println(extraDisp);
 			System.out.println("*************************************************");
 			System.out.println(" ");
 			System.out.println(" ");
