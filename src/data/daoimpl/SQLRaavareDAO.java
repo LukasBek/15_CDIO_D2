@@ -10,10 +10,10 @@ import data.daointerface.RaavareDAO;
 import data.database.Connector;
 import data.dto.RaavareDTO;
 
-public class MYSQLRaavareDAO implements RaavareDAO{
+public class SQLRaavareDAO implements RaavareDAO{
 	private Connector connector;
 	
-	public MYSQLRaavareDAO(){
+	public SQLRaavareDAO(){
 		try {
 			connector = new Connector();
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
@@ -46,8 +46,18 @@ public class MYSQLRaavareDAO implements RaavareDAO{
 		}
 		return list;
 	}
-	
-	// TODO Add update method
-	
 
+	@Override
+	public RaavareDTO getRaavare(int id) throws DALException {
+		RaavareDTO rDTO = new RaavareDTO();
+		ResultSet rs = connector.doQuery("SELECT*FROM raavare WHERE raavare_id = " + id);
+		try{
+			rDTO.setrID(rs.getInt("raavare_id"));
+			rDTO.setrName(rs.getString("raavare_navn"));
+			rDTO.setDeliverer(rs.getString("levandoer"));
+		}catch(SQLException e){
+			throw new DALException(e);
+		}
+		return rDTO;
+	}
 }

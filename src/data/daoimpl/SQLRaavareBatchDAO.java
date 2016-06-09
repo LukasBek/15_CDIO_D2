@@ -9,10 +9,10 @@ import data.daointerface.DALException;
 import data.database.Connector;
 import data.dto.RaavareBatchDTO;
 
-public class MYSQLRaavareBatchDAO {
+public class SQLRaavareBatchDAO {
 	private Connector connector;
 
-	public MYSQLRaavareBatchDAO(){
+	public SQLRaavareBatchDAO(){
 		try {
 			connector = new Connector();
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {

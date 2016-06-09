@@ -11,10 +11,11 @@ import java.util.Scanner;
 
 import data.daoimpl.SQLOperatoerDAO;
 import data.daoimpl.SQLProduktBatchDAO;
-//import data.daoimpl.SQLReceptDAO;
-import data.daoimpl.SQLWeightDAO;
+import data.daoimpl.SQLRaavareDAO;
+import data.daoimpl.SQLReceptDAO;
 import data.daointerface.DALException;
 import data.dto.ProduktBatchDTO;
+import data.dto.ProduktBatchKomponentDTO;
 
 
 public class Weight{
@@ -28,6 +29,7 @@ public class Weight{
 	static int portdst = 8000;
 	static int batchNumber;
 	static int id = -1;
+	static int nextRaavare;
 	static Socket sock;
 	static BufferedReader instream;
 	static DataOutputStream outstream;
@@ -62,8 +64,11 @@ public class Weight{
 
 		SQLOperatoerDAO odao = new SQLOperatoerDAO();
 		SQLProduktBatchDAO pbdao = new SQLProduktBatchDAO();
-		//		SQLReceptDAO rdao = new SQLReceptDAO();
-		loginMethods lm = new loginMethods(odao);
+		SQLReceptDAO receptdao = new SQLReceptDAO();
+		SQLRaavareDAO raavaredao = new SQLRaavareDAO();
+
+		loginMethods lm = new loginMethods(odao);	
+		RaavareMethod rm = new RaavareMethod();
 
 		boolean loggedIn = false;
 
@@ -89,9 +94,12 @@ public class Weight{
 				}
 			}
 		}
-		printmenu(odao, id);
+		//		printmenu(odao, id);
 		try{
 			while(!(inline=instream.readLine().toUpperCase()).isEmpty()){//her ventes på input
+
+
+
 				if(inline.startsWith("RM")){
 					indtDisp="Indtast batchnummer";
 					printmenu(odao, id);
@@ -102,48 +110,64 @@ public class Weight{
 
 						try{
 							batchNumber = sc.nextInt();
-							outstream.writeBytes("RM20 A "+ batchNumber+"\r\n");
-							ProduktBatchDTO pb = new ProduktBatchDTO();
-							pb = pbdao.getProduktBatch(batchNumber);
-//							pb.setOprId(id);
-//							pb.setPbId(batchNumber);
-// TODO this
-//							pbdao.createProduktBatch(pb);
+							nextRaavare = rm.getNextRaavare(batchNumber);
+							if(nextRaavare == -1){
+								
+								indtDisp = "Dette produktbatch er allerede færdigt!";
+								printmenu(odao, id);
+							}else{
+								outstream.writeBytes("RM20 A "+ batchNumber+"\r\n");
+								ProduktBatchKomponentDTO pbk = new ProduktBatchKomponentDTO();
+								//							pbk.setPbId(batchNumber);;
+								//							pbk.setOprId(id);
+								//
+								//							pbdao.createProduktBatchKomponent(pbk);
 
-							//							extraDisp = rdao.getRecept(pbdao.getProduktBatch(batchNumber).getReceptId()).getReceptName();
-							indtDisp = "Place your container on the weight and then reset the scaling";
-							printmenu(odao, id);
+								ProduktBatchDTO pb = new ProduktBatchDTO();
+								pb = pbdao.getProduktBatch(batchNumber);
+								pb.setStatus(1);
+								pbdao.updateProduktBatch(pb);
 
-							while(!(inline=instream.readLine().toUpperCase()).isEmpty()){
-								if(inline.startsWith("B")){
-									try{
-										String temp = inline.substring(2,inline.length());
-										brutto = Double.parseDouble(temp);
-									}catch(StringIndexOutOfBoundsException e){
-										brutto = 0;
-									}catch(NumberFormatException e){
-										indtDisp = "Forkert vægtinput";
+								extraDisp = "Recept der skal produceres: " + receptdao.getRecept(pbdao.getProduktBatch(batchNumber).getReceptId()).getReceptName();
+								indtDisp = "Place your container on the weight and then reset the scaling";
+								printmenu(odao, id);
+
+								while(!(inline=instream.readLine().toUpperCase()).isEmpty()){
+									if(inline.startsWith("B")){
+										try{
+											String temp = inline.substring(2,inline.length());
+											brutto = Double.parseDouble(temp);
+										}catch(StringIndexOutOfBoundsException e){
+											brutto = 0;
+										}catch(NumberFormatException e){
+											indtDisp = "Forkert vægtinput";
+										}
+										printmenu(odao, id);
+										outstream.writeBytes("DB"+"\r\n");
+									}else if (inline.startsWith("T")){
+										outstream.writeBytes("TS"+(tara)+"kg"+"\r\n"); 
+										System.out.println("Her er 2");
+										tara=brutto;
+										indtDisp = "Første råvare: " + nextRaavare + ", " + raavaredao.getRaavare(nextRaavare).getrName();
+										printmenu(odao, id);
+
+									}else{
+										printmenu(odao, id);
+										outstream.writeBytes("ES"+"\r\n");
 									}
-									printmenu(odao, id);
-									outstream.writeBytes("DB"+"\r\n");
-								}else if (inline.startsWith("T")){
-									outstream.writeBytes("TS"+(tara)+"kg"+"\r\n"); 
-									tara=brutto;
-									pb.setStatus(1);
-									pbdao.updateProduktBatch(pb);
-									printmenu(odao, id);
-								}else{
-									printmenu(odao, id);
-									outstream.writeBytes("ES"+"\r\n");
 								}
 							}
-
 							batchCheck = false;
 						}catch(InputMismatchException e){
 							indtDisp="";
 						}
 					}printmenu(odao, id);
 				}
+
+
+
+
+
 				else if(inline.startsWith("D")){
 					if(inline.equals("DW"))
 						indtDisp="";

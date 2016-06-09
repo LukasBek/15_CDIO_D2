@@ -12,10 +12,10 @@ import data.dto.ReceptDTO;
 import data.dto.ReceptKomponentDTO;
 
 
-public class MYSQLReceptDAO implements ReceptDAO{
+public class SQLReceptDAO implements ReceptDAO{
 	private Connector connector;
 	
-	public MYSQLReceptDAO() {
+	public SQLReceptDAO() {
 		try {
 			connector = new Connector();
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {

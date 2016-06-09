@@ -12,9 +12,9 @@ import data.dto.ProduktBatchDTO;
 import data.dto.ProduktBatchKomponentDTO;
 
 public class SQLProduktBatchDAO implements ProduktbatchDAO{
-	
+
 	private Connector connector;
-	 	
+
 	public SQLProduktBatchDAO() {
 		try {
 			connector = new Connector();
@@ -67,10 +67,9 @@ public class SQLProduktBatchDAO implements ProduktbatchDAO{
 
 	@Override
 	public void updateProduktBatch(ProduktBatchDTO pb) throws DALException {
-		connector.doUpdate(
-				"UPDATE produktbatch SET pb_id = '" + pb.getPbId() + "', status = '" + pb.getStatus() + 
-				"', recept_id = '" + pb.getReceptId() + " WHERE recept_id = " + pb.getPbId()			
-				);			
+		String query = "UPDATE produktbatch SET status = '" + pb.getStatus() + 
+				"', recept_id = '" + pb.getReceptId() + "' WHERE pb_id = '" + pb.getPbId()+"'";
+		connector.doUpdate(query);
 	}
 
 	@Override
@@ -144,4 +143,46 @@ public class SQLProduktBatchDAO implements ProduktbatchDAO{
 				" WHERE pb_id = " + produktbatchkomponent.getPbId()
 				);
 	}
+
+	@Override
+	public List<Integer> getProduktBatchRaavareList(int id) throws DALException {
+		List<Integer> list = new ArrayList<Integer>();
+		ResultSet rs = connector.doQuery(
+				"SELECT raavare_id from raavare "
+						+ "NATURAL JOIN receptkomponent "
+						+ "NATURAL JOIN recept "
+						+ "NATURAL JOIN produktbatch "
+						+ "WHERE pb_id = " + id
+				);
+		try{
+			while (rs.next()) {
+				list.add(rs.getInt("raavare_id"));
+			}
+			return list;
+		}catch (SQLException e){
+			throw new DALException(e);
+		}
+	}
+
+	@Override
+	public List<Integer> getProduktBatchDoneRaavare(int batch) throws DALException {
+		List<Integer> list = new ArrayList<Integer>();
+		ResultSet rs = connector.doQuery(
+				"SELECT raavare_id from raavare "
+						+ "NATURAL JOIN receptkomponent "
+						+ "NATURAL JOIN recept "
+						+ "NATURAL JOIN produktbatch "
+						+ "WHERE pb_id = " + batch
+				);
+		try{
+			while (rs.next()) {
+				list.add(rs.getInt("raavare_id"));
+			}
+			return list;
+		}catch (SQLException e){
+			throw new DALException(e);
+		}
+	}
+
+
 }
