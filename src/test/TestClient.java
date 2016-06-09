@@ -18,7 +18,6 @@ public class TestClient{
 			outToServer = new DataOutputStream(clientSocket.getOutputStream());
 			inFromServer = new BufferedReader(new InputStreamReader (clientSocket.getInputStream()));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -46,7 +45,6 @@ public class TestClient{
 			String actualAnswer = inFromServer.readLine();
 			assertEquals(expectedAnswer, actualAnswer);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -62,7 +60,6 @@ public class TestClient{
 			String actualAnswer = inFromServer.readLine();
 			assertEquals(expectedAnswer, actualAnswer);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -78,7 +75,6 @@ public class TestClient{
 			String actualAnswer = inFromServer.readLine();
 			assertEquals(expectedAnswer, actualAnswer);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -94,7 +90,6 @@ public class TestClient{
 			String actualAnswer = inFromServer.readLine();
 			assertEquals(expectedAnswer, actualAnswer);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -110,7 +105,6 @@ public class TestClient{
 			String actualAnswer = inFromServer.readLine();
 			assertEquals(expectedAnswer, actualAnswer);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
