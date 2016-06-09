@@ -112,7 +112,7 @@ public class Weight{
 							batchNumber = sc.nextInt();
 							nextRaavare = rm.getNextRaavare(batchNumber);
 							if(nextRaavare == -1){
-								
+								outstream.writeBytes("RM20 A "+ batchNumber+"\r\n");
 								indtDisp = "Dette produktbatch er allerede færdigt!";
 								printmenu(odao, id);
 							}else{
@@ -150,7 +150,10 @@ public class Weight{
 										tara=brutto;
 										indtDisp = "Første råvare: " + nextRaavare + ", " + raavaredao.getRaavare(nextRaavare).getrName();
 										printmenu(odao, id);
-
+										
+										
+										
+										break;
 									}else{
 										printmenu(odao, id);
 										outstream.writeBytes("ES"+"\r\n");
@@ -227,7 +230,7 @@ public class Weight{
 	}
 
 	public static void printmenu(SQLOperatoerDAO odao, int id){
-		for(int i = 0 ; i<2 ; i++){
+		
 			System.out.println(" ");
 			System.out.println("*************************************************");
 			System.out.println("Netto: "+(brutto - tara)+" kg" );
@@ -250,6 +253,6 @@ public class Weight{
 			System.out.println("Tast Q for at afslutte program program");
 			System.out.println("Indtast (T/B/Q for knap tryk/bruttoændring/quit)");
 			System.out.print ("Tast her:");
-		}
+		
 	}
 }

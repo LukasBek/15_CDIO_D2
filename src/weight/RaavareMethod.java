@@ -12,44 +12,46 @@ public class RaavareMethod {
 	SQLProduktBatchDAO pbdao = new SQLProduktBatchDAO();
 	SQLRaavareBatchDAO rdao = new SQLRaavareBatchDAO();
 
-	List<Integer> rvMax = new ArrayList<Integer>();
-	List<Integer> rvDone = new ArrayList<Integer>();
-	List<Integer> rvNeeded = new ArrayList<Integer>();
 
 	public int getNextRaavare(int batchNumber){
 
-		System.out.println("Her er 1");
+		List<Integer> rvMax = new ArrayList<Integer>();
+		List<Integer> rvDone = new ArrayList<Integer>();
+		List<Integer> rvNeeded = new ArrayList<Integer>();
 		try {		
 			rvMax = pbdao.getProduktBatchRaavareList(batchNumber);
 			rvDone = pbdao.getProduktBatchDoneRaavare(batchNumber);
-			System.out.println("Her er 2");
 		} catch (DALException e) {
 			System.out.println("Error getting raavarelist");
 		}
 
 		for(int i = 0; i<rvMax.size(); i++){
-			System.out.println("Her er mange");
 			rvNeeded.add(0);
 		}
 
+		System.out.println(rvMax.toString());
+		System.out.println(rvNeeded.toString());
+		System.out.println(rvDone.toString());
+		
 		//rv = liste over raavare der skal måles
 		for(int i = 0; i<rvDone.size(); i++){
-			System.out.println("Her er mange 222");
-			for(int j = 0; i<rvMax.size(); j++){
-				System.out.println("Her er rigtigt mange 11111111111");
+			for(int j = 0; j<rvMax.size(); j++){
+				System.out.println("i: " + i + ", j: "+ j);
 				if(rvDone.get(i) == rvMax.get(j)){
 					rvNeeded.set(j, 1);
 				}
 			}
 		}
-		
+		System.out.println(rvMax.toString());
+		System.out.println(rvNeeded.toString());
+		System.out.println(rvDone.toString());
 		for(int i = 0; i<rvNeeded.size(); i++){
-			System.out.println("Her er mange 3333");
 			if(rvNeeded.get(i) == 0){
 				System.out.println(rvMax.get(i));
 				return rvMax.get(i);
 			}
 		}
+		rvMax.get(27);
 		return -1;
 	}
 }

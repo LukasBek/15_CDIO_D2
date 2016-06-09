@@ -49,15 +49,17 @@ public class SQLRaavareDAO implements RaavareDAO{
 
 	@Override
 	public RaavareDTO getRaavare(int id) throws DALException {
-		RaavareDTO rDTO = new RaavareDTO();
 		ResultSet rs = connector.doQuery("SELECT*FROM raavare WHERE raavare_id = " + id);
 		try{
+			if (!rs.first()) throw new DALException ("Raavarebatch " + id + " findes ikke");
+			RaavareDTO rDTO = new RaavareDTO();
 			rDTO.setrID(rs.getInt("raavare_id"));
 			rDTO.setrName(rs.getString("raavare_navn"));
-			rDTO.setDeliverer(rs.getString("levandoer"));
+			rDTO.setDeliverer(rs.getString("leverandoer"));
+			RaavareDTO result = rDTO;
+			return result;
 		}catch(SQLException e){
 			throw new DALException(e);
 		}
-		return rDTO;
 	}
 }

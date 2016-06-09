@@ -145,14 +145,14 @@ public class SQLProduktBatchDAO implements ProduktbatchDAO{
 	}
 
 	@Override
-	public List<Integer> getProduktBatchRaavareList(int id) throws DALException {
+	public List<Integer> getProduktBatchRaavareList(int batch) throws DALException {
 		List<Integer> list = new ArrayList<Integer>();
 		ResultSet rs = connector.doQuery(
 				"SELECT raavare_id from raavare "
 						+ "NATURAL JOIN receptkomponent "
 						+ "NATURAL JOIN recept "
 						+ "NATURAL JOIN produktbatch "
-						+ "WHERE pb_id = " + id
+						+ "WHERE pb_id = " + batch
 				);
 		try{
 			while (rs.next()) {
@@ -168,10 +168,12 @@ public class SQLProduktBatchDAO implements ProduktbatchDAO{
 	public List<Integer> getProduktBatchDoneRaavare(int batch) throws DALException {
 		List<Integer> list = new ArrayList<Integer>();
 		ResultSet rs = connector.doQuery(
-				"SELECT raavare_id from raavare "
-						+ "NATURAL JOIN receptkomponent "
-						+ "NATURAL JOIN recept "
+				"SELECT DISTINCT raavare_id from produktbatchkomponent "
 						+ "NATURAL JOIN produktbatch "
+						+ "NATURAL JOIN recept "
+						+ "NATURAL JOIN receptkomponent "
+						+ "NATURAL JOIN raavare "
+						+ "NATURAL JOIN raavarebatch "
 						+ "WHERE pb_id = " + batch
 				);
 		try{
