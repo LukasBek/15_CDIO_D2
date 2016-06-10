@@ -1,7 +1,9 @@
 package weight;
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
+import java.util.Scanner;
 
 import data.daoimpl.SQLProduktBatchDAO;
 import data.daoimpl.SQLRaavareBatchDAO;
@@ -11,6 +13,7 @@ public class RaavareMethod {
 
 	SQLProduktBatchDAO pbdao = new SQLProduktBatchDAO();
 	SQLRaavareBatchDAO rdao = new SQLRaavareBatchDAO();
+
 
 
 	public int getNextRaavare(int batchNumber){
@@ -42,16 +45,31 @@ public class RaavareMethod {
 				}
 			}
 		}
-		System.out.println(rvMax.toString());
-		System.out.println(rvNeeded.toString());
-		System.out.println(rvDone.toString());
 		for(int i = 0; i<rvNeeded.size(); i++){
 			if(rvNeeded.get(i) == 0){
 				System.out.println(rvMax.get(i));
 				return rvMax.get(i);
 			}
 		}
-		rvMax.get(27);
 		return -1;
 	}
+	
+	public int measureMethod(Scanner sc, int raavareID){
+		int raavareBatch;
+		try{
+		raavareBatch = sc.nextInt();
+		}catch(InputMismatchException e){
+			raavareBatch = -1;
+		}
+		
+		try {
+			if(rdao.getRaavareBatch(raavareBatch).getRaavareId()==raavareID){
+				raavareBatch = -2;
+			}
+		} catch (DALException e) {
+			e.printStackTrace();
+		}
+		return raavareBatch;
+	}
+
 }

@@ -13,9 +13,9 @@ public class Client{
 	Scanner sc;
 
 	public static void main(String argv[]) throws IOException{
-		
+
 		Client client = new Client();
-		
+
 		//Making it possible to change to portnumber
 		if(argv.length > 0){	
 			try{
@@ -29,7 +29,7 @@ public class Client{
 				System.out.println(e);
 			}
 		}
-		
+
 		client.run();
 	}
 
@@ -38,7 +38,7 @@ public class Client{
 		String toWeight;
 		String fromWeight;
 		boolean run;
-	
+
 		//Creates connection to the weight
 		Socket clientSocket = null;
 		BufferedReader inFromUser = null;
@@ -55,24 +55,24 @@ public class Client{
 			System.out.println("Unable to establish connection to weight");
 		}
 
-		System.out.println("Please login to use the weight application");
+		System.out.println("Venligst login for at bruge vægtapplikationen");
 		while(!login){
 			login(outToServer, inFromServer);
 		}
-		
+
 		run = true;
 
 		//The main program being run as long as "run" is true
 		try{
 			while(run){
-				System.out.println("Following commands work:");
-				System.out.println("RM to do the RM20 order");
-				System.out.println("D followed by letters, for display");
-				System.out.println("DW to clean display");
-				System.out.println("T to set Tarra");
-				System.out.println("S to weight your object");
-				System.out.println("B followed by the weight of the item you want to weigh");
-				System.out.println("Q to exit");
+				System.out.println("Følgende kommandoer virker");
+				System.out.println("RM for at køre RM20-ordren");
+				System.out.println("D efterfulgt af en besked til displayet");
+				System.out.println("DW for at rense displayet");
+				System.out.println("T for at sette tarra");
+				System.out.println("S for at veje objektet");
+				System.out.println("B efterfulgt af vægten på det objekt du vil veje");
+				System.out.println("Q for at afslutte");
 				toWeight = inFromUser.readLine();
 
 				//sends input to weight
@@ -117,35 +117,35 @@ public class Client{
 
 	private void login(PrintWriter outToServer, BufferedReader inFromServer) {
 		sc = new Scanner(System.in);		
-		
+
 		int id;
 		String password;
 		String fromServer = null;
-		
-		System.out.println("Enter your ID below:");
+
+		System.out.println("Indtast dit ID herunder:");
 		try{
 			id = sc.nextInt();
 		}catch(InputMismatchException e){
-			System.out.println("Please enter a valid ID (1-99999)");
+			System.out.println("Venligst indtast et gyldigt ID (mellem 1-99999):");
 			return;
 		}
-		System.out.println("Enter your password below:");
+		System.out.println("Indtast din adgangskode herunder:");
 		password = sc.next();
-		
+
 		try {
 			outToServer.println(id);
 			outToServer.println(password);
 			outToServer.flush();
-			
+
 			fromServer = inFromServer.readLine();
-			
+
 			if(fromServer.equals("succes")){
 				login = true;
 			}else if(fromServer.equals("failure")){
-				System.out.println("Wrong login, try again");
+				System.out.println("Forkert login, prøv igen");
 				login(outToServer, inFromServer);
 			}else{
-				System.out.println("error in login (clientside)");
+				System.out.println("Fejl under loginprocessen");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

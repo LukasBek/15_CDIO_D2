@@ -11,11 +11,13 @@ import java.util.Scanner;
 
 import data.daoimpl.SQLOperatoerDAO;
 import data.daoimpl.SQLProduktBatchDAO;
+import data.daoimpl.SQLRaavareBatchDAO;
 import data.daoimpl.SQLRaavareDAO;
 import data.daoimpl.SQLReceptDAO;
 import data.daointerface.DALException;
 import data.dto.ProduktBatchDTO;
 import data.dto.ProduktBatchKomponentDTO;
+import data.dto.RaavareBatchDTO;
 
 
 public class Weight{
@@ -28,7 +30,7 @@ public class Weight{
 	static String extraDisp ="";
 	static int portdst = 8000;
 	static int batchNumber;
-	static int id = -1;
+	static int id;
 	static int nextRaavare;
 	static Socket sock;
 	static BufferedReader instream;
@@ -66,6 +68,7 @@ public class Weight{
 		SQLProduktBatchDAO pbdao = new SQLProduktBatchDAO();
 		SQLReceptDAO receptdao = new SQLReceptDAO();
 		SQLRaavareDAO raavaredao = new SQLRaavareDAO();
+		SQLRaavareBatchDAO rbdao = new SQLRaavareBatchDAO();
 
 		loginMethods lm = new loginMethods(odao);	
 		RaavareMethod rm = new RaavareMethod();
@@ -117,19 +120,14 @@ public class Weight{
 								printmenu(odao, id);
 							}else{
 								outstream.writeBytes("RM20 A "+ batchNumber+"\r\n");
-								ProduktBatchKomponentDTO pbk = new ProduktBatchKomponentDTO();
-								//							pbk.setPbId(batchNumber);;
-								//							pbk.setOprId(id);
-								//
-								//							pbdao.createProduktBatchKomponent(pbk);
 
 								ProduktBatchDTO pb = new ProduktBatchDTO();
 								pb = pbdao.getProduktBatch(batchNumber);
 								pb.setStatus(1);
 								pbdao.updateProduktBatch(pb);
 
+								indtDisp = "Sæt en beholder på vægten og herefter tarrer den";
 								extraDisp = "Recept der skal produceres: " + receptdao.getRecept(pbdao.getProduktBatch(batchNumber).getReceptId()).getReceptName();
-								indtDisp = "Place your container on the weight and then reset the scaling";
 								printmenu(odao, id);
 
 								while(!(inline=instream.readLine().toUpperCase()).isEmpty()){
@@ -145,15 +143,86 @@ public class Weight{
 										printmenu(odao, id);
 										outstream.writeBytes("DB"+"\r\n");
 									}else if (inline.startsWith("T")){
-										outstream.writeBytes("TS"+(tara)+"kg"+"\r\n"); 
-										System.out.println("Her er 2");
+
 										tara=brutto;
-										indtDisp = "Første råvare: " + nextRaavare + ", " + raavaredao.getRaavare(nextRaavare).getrName();
+										indtDisp = "Indtast raavarebatchnummer for " + raavaredao.getRaavare(nextRaavare).getrName() + ", med id: " + nextRaavare;
+										extraDisp = "Første råvare: " + raavaredao.getRaavare(nextRaavare).getrName();
 										printmenu(odao, id);
-										
-										
-										
-										break;
+
+										int raavareBatch = 0;
+										boolean correctRV = false;
+										while(!correctRV){
+											raavareBatch = rm.measureMethod(sc, nextRaavare);
+											if(raavareBatch>0){
+												correctRV = true;
+											}else if(raavareBatch==-1){
+												extraDisp = "Det indtastede er ikke et raavarebatchnummer";
+												printmenu(odao, id);
+											}else if(raavareBatch==-2){
+												extraDisp = "Det indtastede raavarebatchnummer består ikke af " + raavaredao.getRaavare(nextRaavare).getrName();
+												printmenu(odao, id);
+											}
+										}
+
+										double raavareNom;
+										double raavareTol;
+										int receptID;
+
+										receptID = pbdao.getProduktBatch(batchNumber).getReceptId();
+										raavareNom = receptdao.getReceptKomp(receptID, nextRaavare).getNom_netto();
+										raavareTol = receptdao.getReceptKomp(receptID, nextRaavare).getTolerance();
+
+										indtDisp = "Sæt "+ raavareNom + " kg på vægten. Må kun have en tolerance på " + raavareTol;
+										printmenu(odao, id);
+										outstream.writeBytes("TS"+(tara)+"kg"+"\r\n"); 
+
+										while(!(inline=instream.readLine().toUpperCase()).isEmpty()){
+											if(inline.startsWith("B")){
+												try{
+													String temp = inline.substring(2,inline.length());
+													brutto = Double.parseDouble(temp);
+												}catch(StringIndexOutOfBoundsException e){
+													brutto = 0;
+												}catch(NumberFormatException e){
+													indtDisp = "Forkert vægtinput";
+												}
+												printmenu(odao, id);
+												outstream.writeBytes("DB"+"\r\n");
+
+											}else if (inline.startsWith("S")){
+												if (brutto <= raavareNom+raavareTol && brutto >= raavareNom-raavareTol){
+
+
+													ProduktBatchKomponentDTO pbkDTO = new ProduktBatchKomponentDTO();
+													pbkDTO.setPbId(batchNumber);
+													pbkDTO.setRbId(raavareBatch);
+													pbkDTO.setOprId(id);
+													pbkDTO.setTara(brutto);
+													pbkDTO.setNetto(tara);
+													pbdao.createProduktBatchKomponent(pbkDTO);
+
+													double amount;
+													RaavareBatchDTO rbDTO = new RaavareBatchDTO();
+													rbDTO = rbdao.getRaavareBatch(raavareBatch);
+													amount = rbDTO.getMaengde();
+													rbDTO.setMaengde(amount-brutto);
+													rbdao.updateRaavareBatch(rbDTO);
+													indtDisp = "";
+													extraDisp = "Din måling er nu registreret";
+													break;
+
+												}else{
+													indtDisp = "Maalingen ligger ikke inden for tolerancen, prøv igen";
+													printmenu(odao, id);
+													break;
+												}
+											}else{
+												printmenu(odao, id);
+												outstream.writeBytes("ES"+"\r\n");
+											}
+										}
+
+
 									}else{
 										printmenu(odao, id);
 										outstream.writeBytes("ES"+"\r\n");
@@ -162,7 +231,9 @@ public class Weight{
 							}
 							batchCheck = false;
 						}catch(InputMismatchException e){
-							indtDisp="";
+							indtDisp="Det indtastede er ikke et batchnummer";
+							outstream.writeBytes("RM20 A "+"-1"+"\r\n");
+
 						}
 					}printmenu(odao, id);
 				}
@@ -229,30 +300,31 @@ public class Weight{
 
 	}
 
+
 	public static void printmenu(SQLOperatoerDAO odao, int id){
-		
-			System.out.println(" ");
-			System.out.println("*************************************************");
-			System.out.println("Netto: "+(brutto - tara)+" kg" );
-			System.out.println("Instruktions display: "+ indtDisp );
-			System.out.println(extraDisp);
-			System.out.println("*************************************************");
-			System.out.println(" ");
-			System.out.println(" ");
-			System.out.println("Debug info: ");
-			System.out.println("Hooked up to"+sock.getInetAddress() );
-			System.out.println("Brutto: "+(brutto)+" kg" );
-			System.out.println("Streng modtaget: "+inline) ;
-			System.out.println(" ");
-			System.out.println("Denne vægt simulator lytter på ordrene ");
-			System.out.println("S, T, D'TEST', DW, RM20 8....,BogQ ");
-			System.out.println("på kommunikation sporten. ");
-			System.out.println("******") ;
-			System.out.println("Tast T for tara (svarende til knap tryk på vægt)");
-			System.out.println("Tast B for ny brutto (svarende til at belastningen på vægt ændres)");
-			System.out.println("Tast Q for at afslutte program program");
-			System.out.println("Indtast (T/B/Q for knap tryk/bruttoændring/quit)");
-			System.out.print ("Tast her:");
-		
+
+		System.out.println(" ");
+		System.out.println("*************************************************");
+		System.out.println("Netto: "+(brutto)+" kg" );
+		System.out.println("Instruktions display: "+ indtDisp );
+		System.out.println(extraDisp);
+		System.out.println("*************************************************");
+		System.out.println(" ");
+		System.out.println(" ");
+		System.out.println("Debug info: ");
+		System.out.println("Hooked up to"+sock.getInetAddress() );
+		System.out.println("Brutto: "+(brutto+tara)+" kg" );
+		System.out.println("Streng modtaget: "+inline) ;
+		System.out.println(" ");
+		System.out.println("Denne vægt simulator lytter på ordrene ");
+		System.out.println("S, T, D'TEST', DW, RM20 8....,BogQ ");
+		System.out.println("på kommunikation sporten. ");
+		System.out.println("******") ;
+		System.out.println("Tast T for tara (svarende til knap tryk på vægt)");
+		System.out.println("Tast B for ny brutto (svarende til at belastningen på vægt ændres)");
+		System.out.println("Tast Q for at afslutte program program");
+		System.out.println("Indtast (T/B/Q for knap tryk/bruttoændring/quit)");
+		System.out.print ("Tast her:");
+
 	}
 }
