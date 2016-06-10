@@ -31,10 +31,6 @@ public class RaavareMethod {
 		for(int i = 0; i<rvMax.size(); i++){
 			rvNeeded.add(0);
 		}
-
-		System.out.println(rvMax.toString());
-		System.out.println(rvNeeded.toString());
-		System.out.println(rvDone.toString());
 		
 		//rv = liste over raavare der skal måles
 		for(int i = 0; i<rvDone.size(); i++){

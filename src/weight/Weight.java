@@ -35,6 +35,7 @@ public class Weight{
 	static Socket sock;
 	static BufferedReader instream;
 	static DataOutputStream outstream;
+	static boolean measured = false;
 
 	static Scanner sc = new Scanner(System.in);
 
@@ -130,7 +131,7 @@ public class Weight{
 								extraDisp = "Recept der skal produceres: " + receptdao.getRecept(pbdao.getProduktBatch(batchNumber).getReceptId()).getReceptName();
 								printmenu(odao, id);
 
-								while(!(inline=instream.readLine().toUpperCase()).isEmpty()){
+								while(!(inline=instream.readLine().toUpperCase()).isEmpty() || measured == false){
 									if(inline.startsWith("B")){
 										try{
 											String temp = inline.substring(2,inline.length());
@@ -149,10 +150,13 @@ public class Weight{
 										extraDisp = "Første råvare: " + raavaredao.getRaavare(nextRaavare).getrName();
 										printmenu(odao, id);
 
+										
 										int raavareBatch = 0;
 										boolean correctRV = false;
 										while(!correctRV){
 											raavareBatch = rm.measureMethod(sc, nextRaavare);
+											System.out.println(nextRaavare);
+											System.out.println(rbdao.getRaavareBatch(12).getRaavareId());
 											if(raavareBatch>0){
 												correctRV = true;
 											}else if(raavareBatch==-1){
@@ -180,9 +184,9 @@ public class Weight{
 											if(inline.startsWith("B")){
 												try{
 													String temp = inline.substring(2,inline.length());
-													brutto = Double.parseDouble(temp);
+													brutto += Double.parseDouble(temp);
 												}catch(StringIndexOutOfBoundsException e){
-													brutto = 0;
+													
 												}catch(NumberFormatException e){
 													indtDisp = "Forkert vægtinput";
 												}
@@ -190,15 +194,15 @@ public class Weight{
 												outstream.writeBytes("DB"+"\r\n");
 
 											}else if (inline.startsWith("S")){
-												if (brutto <= raavareNom+raavareTol && brutto >= raavareNom-raavareTol){
+												if (brutto-tara <= raavareNom+raavareTol && brutto-tara >= raavareNom-raavareTol){
 
 
 													ProduktBatchKomponentDTO pbkDTO = new ProduktBatchKomponentDTO();
 													pbkDTO.setPbId(batchNumber);
 													pbkDTO.setRbId(raavareBatch);
 													pbkDTO.setOprId(id);
-													pbkDTO.setTara(brutto);
-													pbkDTO.setNetto(tara);
+													pbkDTO.setTara(tara);
+													pbkDTO.setNetto(brutto-tara);
 													pbdao.createProduktBatchKomponent(pbkDTO);
 
 													double amount;
@@ -213,8 +217,8 @@ public class Weight{
 
 												}else{
 													indtDisp = "Maalingen ligger ikke inden for tolerancen, prøv igen";
+													brutto = brutto - tara;
 													printmenu(odao, id);
-													break;
 												}
 											}else{
 												printmenu(odao, id);
@@ -305,7 +309,7 @@ public class Weight{
 
 		System.out.println(" ");
 		System.out.println("*************************************************");
-		System.out.println("Netto: "+(brutto)+" kg" );
+		System.out.println("Netto: "+(brutto-tara)+" kg" );
 		System.out.println("Instruktions display: "+ indtDisp );
 		System.out.println(extraDisp);
 		System.out.println("*************************************************");
@@ -313,7 +317,7 @@ public class Weight{
 		System.out.println(" ");
 		System.out.println("Debug info: ");
 		System.out.println("Hooked up to"+sock.getInetAddress() );
-		System.out.println("Brutto: "+(brutto+tara)+" kg" );
+		System.out.println("Brutto: "+(brutto)+" kg" );
 		System.out.println("Streng modtaget: "+inline) ;
 		System.out.println(" ");
 		System.out.println("Denne vægt simulator lytter på ordrene ");
