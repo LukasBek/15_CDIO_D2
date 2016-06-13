@@ -110,13 +110,17 @@ public class Weight{
 
 					boolean batchCheck = true;
 					while(batchCheck){
-
 						try{
-							batchNumber = sc.nextInt();
+							batchNumber = Integer.parseInt(sc.nextLine());
+						}catch(NumberFormatException e){
+							indtDisp="Indtast et gyldigt ID";
+							printmenu(odao, id);
+							continue;
+						}
 							nextRaavare = rm.getNextRaavare(batchNumber);
 							if(nextRaavare == -1){
 								outstream.writeBytes("RM20 A "+ batchNumber+"\r\n");
-								indtDisp = "Dette produktbatch er allerede færdigt!";
+								indtDisp = "Dette produktbatch er allerede færdigt eller eksisterer ikke";
 								printmenu(odao, id);
 
 							}else{
@@ -251,11 +255,7 @@ public class Weight{
 
 							}
 							batchCheck = false;
-						}catch(InputMismatchException e){
-							indtDisp="Det indtastede er ikke et batchnummer";
-							outstream.writeBytes("RM20 A "+"-1"+"\r\n");
-
-						}
+						
 					}printmenu(odao, id);
 				}else if(inline.startsWith("D")){
 					if(inline.equals("DW"))

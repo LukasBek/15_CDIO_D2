@@ -31,11 +31,10 @@ public class RaavareMethod {
 		for(int i = 0; i<rvMax.size(); i++){
 			rvNeeded.add(0);
 		}
-		
+
 		//rv = liste over raavare der skal måles
 		for(int i = 0; i<rvDone.size(); i++){
 			for(int j = 0; j<rvMax.size(); j++){
-				System.out.println("i: " + i + ", j: "+ j);
 				if(rvDone.get(i) == rvMax.get(j)){
 					rvNeeded.set(j, 1);
 				}
@@ -49,19 +48,17 @@ public class RaavareMethod {
 		}
 		return -1;
 	}
-	
+
 	public int measureMethod(Scanner sc, int raavareID){
 		int raavareBatch;
 		try{
-		raavareBatch = sc.nextInt();
-		}catch(InputMismatchException e){
+			raavareBatch = Integer.parseInt(sc.nextLine());
+		}catch(NumberFormatException e){
 			raavareBatch = -1;
 		}
-		
+
 		try {
 			if(rdao.getRaavareBatch(raavareBatch).getRaavareId()!=raavareID){
-				System.out.println(raavareID);
-				System.out.println(rdao.getRaavareBatch(raavareBatch).getRaavareId());
 				raavareBatch = -2;
 			}
 		} catch (DALException e) {
