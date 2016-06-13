@@ -1,11 +1,6 @@
 package weight;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -22,7 +17,6 @@ import data.dto.RaavareBatchDTO;
 
 public class Weight{
 
-	static ServerSocket listener;
 	static double brutto=0;
 	static double tara = 0;
 	static String inline;
@@ -32,9 +26,11 @@ public class Weight{
 	static int batchNumber;
 	static int id;
 	static int nextRaavare;
-	static Socket sock;
-	static BufferedReader instream;
-	static DataOutputStream outstream;
+	
+	static boolean loop1 = true;
+	static boolean loop2 = true;
+	static boolean loop3 = true;
+	
 	static boolean measured = false;
 
 	static Scanner sc = new Scanner(System.in);
@@ -56,15 +52,6 @@ public class Weight{
 			}
 		}
 
-		listener = new ServerSocket(portdst);
-
-		System.out.println("Venter på connection på port "+portdst);
-		System.out.println("Indtast eventuel portnummer som 1. argument");
-		System.out.println("på kommandolinien foran det port nr");
-		sock = listener.accept();
-		instream = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-		outstream = new DataOutputStream(sock.getOutputStream());
-
 		SQLOperatoerDAO odao = new SQLOperatoerDAO();
 		SQLProduktBatchDAO pbdao = new SQLProduktBatchDAO();
 		SQLReceptDAO receptdao = new SQLReceptDAO();
@@ -75,22 +62,29 @@ public class Weight{
 		RaavareMethod rm = new RaavareMethod();
 
 		boolean loggedIn = false;
+		
+		System.out.println("Log in to use the weight");
 
 		while (!loggedIn){
 			id = -1;
 			String password = null;
 
-			String sid = instream.readLine();
-			id = Integer.parseInt(sid);
-
-			password = instream.readLine();			
-
+			System.out.print("Indtast dit id: ");
+			String userid = sc.nextLine();
+			try{
+			id = Integer.parseInt(userid);
+			}catch(NumberFormatException e){
+				System.out.println("Ugyldig indtastning");
+				continue;
+			}
+			
+			System.out.print("Indtast adgangskode: ");
+			password = sc.nextLine();			
 			if(!lm.correctUserPassword(id, password)){
-				outstream.writeBytes("failure" + "\r\n");
+				System.out.println("Forkert login, prøv igen");
 			}else{
 				loggedIn = true;
-				outstream.writeBytes("succes" + "\r\n");
-				indtDisp = "Welcome";
+				indtDisp = "Velkommen";
 				try {
 					extraDisp = odao.getOperatoer(id).getOprNavn();
 				} catch (DALException e) {
@@ -98,15 +92,15 @@ public class Weight{
 				}
 			}
 		}
-		//		printmenu(odao, id);
 		try{
 			//Main while loop which listens to the first user input from the ASE
-			while(!(inline=instream.readLine().toUpperCase()).isEmpty()){//waiting for input
+			printmenu(odao, id);
 
+			while(loop1){//waiting for input
+				inline=sc.nextLine().toUpperCase();
 				if(inline.startsWith("RM")){
 					indtDisp="Indtast batchnummer";
 					printmenu(odao, id);
-					outstream.writeBytes("RM20 B"+"\r\n");
 
 					boolean batchCheck = true;
 					while(batchCheck){
@@ -119,13 +113,9 @@ public class Weight{
 						}
 							nextRaavare = rm.getNextRaavare(batchNumber);
 							if(nextRaavare == -1){
-								outstream.writeBytes("RM20 A "+ batchNumber+"\r\n");
 								indtDisp = "Dette produktbatch er allerede færdigt eller eksisterer ikke";
 								printmenu(odao, id);
-
 							}else{
-								outstream.writeBytes("RM20 A "+ batchNumber+"\r\n");
-
 								ProduktBatchDTO pb = new ProduktBatchDTO();
 								pb = pbdao.getProduktBatch(batchNumber);
 								pb.setStatus(1);
@@ -137,7 +127,8 @@ public class Weight{
 								measured = false;
 
 								//First RM20 loop listening weight/resetting of the scale
-								while(!(inline=instream.readLine().toUpperCase()).isEmpty()){
+								while(loop2){
+									inline=sc.nextLine().toUpperCase();
 									if(inline.startsWith("B")){
 										try{
 											String temp = inline.substring(2,inline.length());
@@ -148,7 +139,6 @@ public class Weight{
 											indtDisp = "Forkert vægtinput";
 										}
 										printmenu(odao, id);
-										outstream.writeBytes("DB"+"\r\n");
 									}else if (inline.startsWith("T")){
 
 										tara=brutto;
@@ -186,10 +176,10 @@ public class Weight{
 
 										indtDisp = "Sæt "+ raavareNom + " kg " + raavareNavn + " på vægten. Må kun have en tolerance på " + raavareTol;
 										printmenu(odao, id);
-										outstream.writeBytes("TS"+(tara)+"kg"+"\r\n"); 
 
 										//Second RM20 loop where the actual object gets put on the weight
-										while(!(inline=instream.readLine().toUpperCase()).isEmpty()){
+										while(loop3){
+											inline=sc.nextLine().toUpperCase();
 											if(inline.startsWith("B")){
 												try{
 													String temp = inline.substring(2,inline.length());
@@ -199,12 +189,9 @@ public class Weight{
 												}catch(NumberFormatException e){
 													indtDisp = "Forkert vægtinput, prøv igen";
 													printmenu(odao, id);
-													outstream.writeBytes("DB"+"\r\n");
 													continue;
 												}
 												printmenu(odao, id);
-												outstream.writeBytes("DB"+"\r\n");
-
 											}else if (inline.startsWith("S")){
 												if (brutto-tara <= raavareNom+raavareTol && brutto-tara >= raavareNom-raavareTol){
 
@@ -225,7 +212,6 @@ public class Weight{
 													rbdao.updateRaavareBatch(rbDTO);
 													indtDisp = "";
 													extraDisp = "Din måling er nu registreret";
-													outstream.writeBytes("SS"+(brutto - tara)+"kg" +"\r\n");
 													brutto = 0;
 													tara = 0;
 													printmenu(odao, id);
@@ -238,19 +224,19 @@ public class Weight{
 													printmenu(odao, id);
 												}
 											}else{
+												extraDisp="Ikke et gyldigt input";
 												printmenu(odao, id);
-												outstream.writeBytes("ES"+"\r\n");
 											}
-											//End of second RM20 while loop
+											//End of loop3
 										}
 									}else{
+										extraDisp="Ikke et gyldigt input";
 										printmenu(odao, id);
-										outstream.writeBytes("ES"+"\r\n");
 									}
 									if(measured){
 										break;
 									}
-									//End of first RM20 while loop
+									//End of loop2
 								}
 
 							}
@@ -267,17 +253,13 @@ public class Weight{
 							indtDisp="";
 						}
 					printmenu(odao, id);
-					outstream.writeBytes("DB"+"\r\n");
 				}
 				else if(inline.startsWith("T")){
-					outstream.writeBytes("TS"+(tara)+"kg"+"\r\n"); 
 					tara=brutto;
 					printmenu(odao, id);
 				}
 				else if(inline.startsWith("S")){
 					printmenu(odao, id);
-					outstream.writeBytes("SS"+(brutto - tara)+"kg" +"\r\n");
-
 				}
 				else if(inline.startsWith("B")){//denne ordre findes ikke på en fysisk vægt
 					try{
@@ -289,22 +271,19 @@ public class Weight{
 						indtDisp = "Forkert vægtinput";
 					}
 					printmenu(odao, id);
-					outstream.writeBytes("DB"+"\r\n");
 				}
 				else if((inline.startsWith("Q"))){
 					System.out.println("");
 					System.out.println("Program stoppet Q modtaget på com port");
 					System.in.close();
 					System.out.close();
-					sc.close();
-					instream.close();
-					outstream.close();
+					sc.close();;
 					System.exit(0);
 
 				}
 				else{
+					extraDisp="Ikke et gyldigt input";
 					printmenu(odao, id);
-					outstream.writeBytes("ES"+"\r\n");
 				}
 				//End of first while loop
 			}
@@ -328,19 +307,21 @@ public class Weight{
 		System.out.println(" ");
 		System.out.println(" ");
 		System.out.println("Debug info: ");
-		System.out.println("Hooked up to"+sock.getInetAddress() );
 		System.out.println("Brutto: "+(brutto)+" kg" );
 		System.out.println("Streng modtaget: "+inline) ;
 		System.out.println(" ");
 		System.out.println("Denne vægt simulator lytter på ordrene ");
-		System.out.println("S, T, D'TEST', DW, RM20 8....,BogQ ");
+		System.out.println("S, T, D'TEST', DW, RM20, B og Q ");
 		System.out.println("på kommunikation sporten. ");
 		System.out.println("******") ;
+		System.out.println("Tast RM for at lave RM20-ordren");
+		System.out.println("D efterfulgt af en besked til displayet");
+		System.out.println("DW for at rense displayet");
 		System.out.println("Tast T for tara (svarende til knap tryk på vægt)");
-		System.out.println("Tast B for ny brutto (svarende til at belastningen på vægt ændres)");
+		System.out.println("S for at veje objektet");
+		System.out.println("Tast B efterfulgt af en vægt for ny brutto (svarende til at belastningen på vægt ændres)");
 		System.out.println("Tast Q for at afslutte program program");
-		System.out.println("Indtast (T/B/Q for knap tryk/bruttoændring/quit)");
-		System.out.print ("Tast her:");
+		System.out.print  ("Tast her:");
 
 	}
 }
