@@ -59,7 +59,9 @@ public class RaavareMethod {
 		}
 		
 		try {
-			if(rdao.getRaavareBatch(raavareBatch).getRaavareId()==raavareID){
+			if(rdao.getRaavareBatch(raavareBatch).getRaavareId()!=raavareID){
+				System.out.println(raavareID);
+				System.out.println(rdao.getRaavareBatch(raavareBatch).getRaavareId());
 				raavareBatch = -2;
 			}
 		} catch (DALException e) {

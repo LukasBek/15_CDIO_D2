@@ -100,9 +100,8 @@ public class Weight{
 		}
 		//		printmenu(odao, id);
 		try{
-			while(!(inline=instream.readLine().toUpperCase()).isEmpty()){//her ventes på input
-
-
+			//Main while loop which listens to the first user input from the ASE
+			while(!(inline=instream.readLine().toUpperCase()).isEmpty()){//waiting for input
 
 				if(inline.startsWith("RM")){
 					indtDisp="Indtast batchnummer";
@@ -119,6 +118,7 @@ public class Weight{
 								outstream.writeBytes("RM20 A "+ batchNumber+"\r\n");
 								indtDisp = "Dette produktbatch er allerede færdigt!";
 								printmenu(odao, id);
+
 							}else{
 								outstream.writeBytes("RM20 A "+ batchNumber+"\r\n");
 
@@ -130,8 +130,10 @@ public class Weight{
 								indtDisp = "Sæt en beholder på vægten og herefter tarrer den";
 								extraDisp = "Recept der skal produceres: " + receptdao.getRecept(pbdao.getProduktBatch(batchNumber).getReceptId()).getReceptName();
 								printmenu(odao, id);
+								measured = false;
 
-								while(!(inline=instream.readLine().toUpperCase()).isEmpty() || measured == false){
+								//First RM20 loop listening weight/resetting of the scale
+								while(!(inline=instream.readLine().toUpperCase()).isEmpty()){
 									if(inline.startsWith("B")){
 										try{
 											String temp = inline.substring(2,inline.length());
@@ -150,45 +152,51 @@ public class Weight{
 										extraDisp = "Første råvare: " + raavaredao.getRaavare(nextRaavare).getrName();
 										printmenu(odao, id);
 
-										
+
 										int raavareBatch = 0;
 										boolean correctRV = false;
 										while(!correctRV){
 											raavareBatch = rm.measureMethod(sc, nextRaavare);
-											System.out.println(nextRaavare);
-											System.out.println(rbdao.getRaavareBatch(12).getRaavareId());
 											if(raavareBatch>0){
 												correctRV = true;
 											}else if(raavareBatch==-1){
 												extraDisp = "Det indtastede er ikke et raavarebatchnummer";
 												printmenu(odao, id);
+												continue;
 											}else if(raavareBatch==-2){
 												extraDisp = "Det indtastede raavarebatchnummer består ikke af " + raavaredao.getRaavare(nextRaavare).getrName();
 												printmenu(odao, id);
+												continue;
 											}
 										}
 
 										double raavareNom;
 										double raavareTol;
 										int receptID;
+										String raavareNavn;
 
 										receptID = pbdao.getProduktBatch(batchNumber).getReceptId();
+										raavareNavn = raavaredao.getRaavare(nextRaavare).getrName();
 										raavareNom = receptdao.getReceptKomp(receptID, nextRaavare).getNom_netto();
 										raavareTol = receptdao.getReceptKomp(receptID, nextRaavare).getTolerance();
 
-										indtDisp = "Sæt "+ raavareNom + " kg på vægten. Må kun have en tolerance på " + raavareTol;
+										indtDisp = "Sæt "+ raavareNom + " kg " + raavareNavn + " på vægten. Må kun have en tolerance på " + raavareTol;
 										printmenu(odao, id);
 										outstream.writeBytes("TS"+(tara)+"kg"+"\r\n"); 
 
+										//Second RM20 loop where the actual object gets put on the weight
 										while(!(inline=instream.readLine().toUpperCase()).isEmpty()){
 											if(inline.startsWith("B")){
 												try{
 													String temp = inline.substring(2,inline.length());
 													brutto += Double.parseDouble(temp);
 												}catch(StringIndexOutOfBoundsException e){
-													
+													System.out.println("Error in second RM20 loop. 1");
 												}catch(NumberFormatException e){
-													indtDisp = "Forkert vægtinput";
+													indtDisp = "Forkert vægtinput, prøv igen";
+													printmenu(odao, id);
+													outstream.writeBytes("DB"+"\r\n");
+													continue;
 												}
 												printmenu(odao, id);
 												outstream.writeBytes("DB"+"\r\n");
@@ -213,25 +221,34 @@ public class Weight{
 													rbdao.updateRaavareBatch(rbDTO);
 													indtDisp = "";
 													extraDisp = "Din måling er nu registreret";
+													outstream.writeBytes("SS"+(brutto - tara)+"kg" +"\r\n");
+													brutto = 0;
+													tara = 0;
+													printmenu(odao, id);
+													measured = true;
 													break;
 
 												}else{
 													indtDisp = "Maalingen ligger ikke inden for tolerancen, prøv igen";
-													brutto = brutto - tara;
+													brutto = tara;
 													printmenu(odao, id);
 												}
 											}else{
 												printmenu(odao, id);
 												outstream.writeBytes("ES"+"\r\n");
 											}
+											//End of second RM20 while loop
 										}
-
-
 									}else{
 										printmenu(odao, id);
 										outstream.writeBytes("ES"+"\r\n");
 									}
+									if(measured){
+										break;
+									}
+									//End of first RM20 while loop
 								}
+
 							}
 							batchCheck = false;
 						}catch(InputMismatchException e){
@@ -240,13 +257,7 @@ public class Weight{
 
 						}
 					}printmenu(odao, id);
-				}
-
-
-
-
-
-				else if(inline.startsWith("D")){
+				}else if(inline.startsWith("D")){
 					if(inline.equals("DW"))
 						indtDisp="";
 					else
@@ -295,6 +306,7 @@ public class Weight{
 					printmenu(odao, id);
 					outstream.writeBytes("ES"+"\r\n");
 				}
+				//End of first while loop
 			}
 		}
 		catch(Exception e){

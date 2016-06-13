@@ -131,8 +131,8 @@ public class SQLProduktBatchDAO implements ProduktbatchDAO{
 	public void createProduktBatchKomponent(ProduktBatchKomponentDTO produktbatchkomponent) throws DALException {
 		connector.doUpdate(
 				"INSERT INTO produktbatchkomponent(pb_id, rb_id, tara, netto, opr_id) VALUES " +
-						"(" + produktbatchkomponent.getPbId() + ", " + produktbatchkomponent.getRbId() + ", " + produktbatchkomponent.getNetto() + ", " + 
-						produktbatchkomponent.getTara() + ", " + produktbatchkomponent.getOprId() + ")"
+						"(" + produktbatchkomponent.getPbId() + ", " + produktbatchkomponent.getRbId() + ", " + 
+						produktbatchkomponent.getTara() + ", " + produktbatchkomponent.getNetto() + ", " + produktbatchkomponent.getOprId() + ")"
 				);
 	}
 
