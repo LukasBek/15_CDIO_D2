@@ -180,10 +180,12 @@ public class Weight{
 
 										indtDisp = "Sæt "+ raavareNom + " kg " + raavareNavn + " på vægten. Må kun have en tolerance på " + raavareTol;
 										extraDisp = "Første råvare: " + raavaredao.getRaavare(nextRaavare).getrName();
-										printmenu(odao, id);
+										
 
 										//Second RM20 loop where the actual object gets put on the weight
 										while(loop3){
+											indtDisp = "Sæt "+ raavareNom + " kg " + raavareNavn + " på vægten. Må kun have en tolerance på " + raavareTol;
+											printmenu(odao, id);
 											inline=sc.nextLine().toUpperCase();
 											if(inline.startsWith("B")){
 												try{
@@ -316,14 +318,14 @@ public class Weight{
 		System.out.println("Streng modtaget: "+inline) ;
 		System.out.println(" ");
 		System.out.println("Denne vægt simulator lytter på ordrene ");
-		System.out.println("S, T, D'TEST', DW, RM20, B og Q ");
+		System.out.println("S, T, D 'TEST', DW, RM20, B og Q ");
 		System.out.println("på kommunikation sporten. ");
 		System.out.println("******") ;
 		System.out.println("Tast RM for at lave RM20-ordren");
-		System.out.println("D efterfulgt af en besked til displayet");
-		System.out.println("DW for at rense displayet");
+		System.out.println("Tast D efterfulgt af en besked til displayet");
+		System.out.println("Tast DW for at rense displayet");
 		System.out.println("Tast T for tara (svarende til knap tryk på vægt)");
-		System.out.println("S for at veje objektet");
+		System.out.println("Tast S for at veje objektet");
 		System.out.println("Tast B efterfulgt af en vægt for ny brutto (svarende til at belastningen på vægt ændres)");
 		System.out.println("Tast Q for at afslutte program program");
 		System.out.print  ("Tast her:");
