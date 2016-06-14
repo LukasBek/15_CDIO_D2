@@ -61,7 +61,7 @@ public class RaavareMethod {
 				raavareBatch = -2;
 			}
 		} catch (DALException e) {
-			e.printStackTrace();
+			raavareBatch = -3;
 		}
 		return raavareBatch;
 	}

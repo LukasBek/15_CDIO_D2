@@ -107,7 +107,7 @@ public class Weight{
 						try{
 							batchNumber = Integer.parseInt(sc.nextLine());
 						}catch(NumberFormatException e){
-							indtDisp="Indtast et gyldigt ID";
+							indtDisp="Indtast et gyldigt batchnummer-id";
 							printmenu(odao, id);
 							continue;
 						}
@@ -121,7 +121,7 @@ public class Weight{
 								pb.setStatus(1);
 								pbdao.updateProduktBatch(pb);
 
-								indtDisp = "Sæt en beholder på vægten og herefter tarrer den";
+								indtDisp = "Sæt en beholder på vægten og herefter tarer for at fortsætte";
 								extraDisp = "Recept der skal produceres: " + receptdao.getRecept(pbdao.getProduktBatch(batchNumber).getReceptId()).getReceptName();
 								printmenu(odao, id);
 								measured = false;
@@ -161,6 +161,10 @@ public class Weight{
 												extraDisp = "Det indtastede raavarebatchnummer består ikke af " + raavaredao.getRaavare(nextRaavare).getrName();
 												printmenu(odao, id);
 												continue;
+											}else if(raavareBatch==-3){
+												extraDisp = "Det indtastede råvarebatchnummer findes ikke i systemet";
+												printmenu(odao, id);
+												continue;
 											}
 										}
 
@@ -175,6 +179,7 @@ public class Weight{
 										raavareTol = receptdao.getReceptKomp(receptID, nextRaavare).getTolerance();
 
 										indtDisp = "Sæt "+ raavareNom + " kg " + raavareNavn + " på vægten. Må kun have en tolerance på " + raavareTol;
+										extraDisp = "Første råvare: " + raavaredao.getRaavare(nextRaavare).getrName();
 										printmenu(odao, id);
 
 										//Second RM20 loop where the actual object gets put on the weight
@@ -185,7 +190,7 @@ public class Weight{
 													String temp = inline.substring(2,inline.length());
 													brutto += Double.parseDouble(temp);
 												}catch(StringIndexOutOfBoundsException e){
-													System.out.println("Error in second RM20 loop. 1");
+													System.out.println("Error in second RM20 loop");
 												}catch(NumberFormatException e){
 													indtDisp = "Forkert vægtinput, prøv igen";
 													printmenu(odao, id);

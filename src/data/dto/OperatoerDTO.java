@@ -19,6 +19,8 @@ public class OperatoerDTO implements Serializable{
 	String password;
 	/** The operators admin status. TRUE = admin, FALSE = not dmin */
 	int admin;
+	
+	private static final long serialVersionUID = 1L;
 
 
 	public OperatoerDTO() {
