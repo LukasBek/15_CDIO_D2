@@ -1,7 +1,5 @@
 package weight;
 
-import java.io.IOException;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import data.daoimpl.SQLOperatoerDAO;
@@ -22,7 +20,6 @@ public class Weight{
 	static String inline;
 	static String indtDisp ="";
 	static String extraDisp ="";
-	static int portdst = 8000;
 	static int batchNumber;
 	static int id;
 	static int nextRaavare;
@@ -35,22 +32,10 @@ public class Weight{
 
 	static Scanner sc = new Scanner(System.in);
 
-	public static void main(String[]args) throws IOException{
+	public static void main(String[]args){
 
 		//This allows you to change the desired port the program will run on. 
 		//It will be changed when launching the program through cmd: java -jar *NameOfFile*.jar *DesiredPort (>1024)* 
-		if(args.length > 0){	
-			try{
-				int foo = 0;
-				foo = Integer.parseInt(args[0]);
-				if(foo> 1024 ){
-					portdst = foo;
-					System.out.println(args[0]);
-				}
-			}	catch(InputMismatchException e){
-				System.out.println(e);
-			}
-		}
 
 		SQLOperatoerDAO odao = new SQLOperatoerDAO();
 		SQLProduktBatchDAO pbdao = new SQLProduktBatchDAO();
