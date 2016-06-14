@@ -178,7 +178,7 @@ public class Weight{
 										raavareNom = receptdao.getReceptKomp(receptID, nextRaavare).getNom_netto();
 										raavareTol = receptdao.getReceptKomp(receptID, nextRaavare).getTolerance();
 
-										indtDisp = "Sæt "+ raavareNom + " kg " + raavareNavn + " på vægten. Må kun have en tolerance på " + raavareTol;
+										indtDisp = "Sæt "+ raavareNom + "kg " + raavareNavn + " på vægten. Må kun have en tolerance på " + raavareTol;
 										extraDisp = "Første råvare: " + raavaredao.getRaavare(nextRaavare).getrName();
 										
 
