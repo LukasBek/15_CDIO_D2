@@ -23,11 +23,11 @@ public class Weight{
 	static int batchNumber;
 	static int id;
 	static int nextRaavare;
-	
+
 	static boolean loop1 = true;
 	static boolean loop2 = true;
 	static boolean loop3 = true;
-	
+
 	static boolean measured = false;
 
 	static Scanner sc = new Scanner(System.in);
@@ -47,7 +47,7 @@ public class Weight{
 		RaavareMethod rm = new RaavareMethod();
 
 		boolean loggedIn = false;
-		
+
 		System.out.println("Log in to use the weight");
 
 		while (!loggedIn){
@@ -57,12 +57,12 @@ public class Weight{
 			System.out.print("Indtast dit id: ");
 			String userid = sc.nextLine();
 			try{
-			id = Integer.parseInt(userid);
+				id = Integer.parseInt(userid);
 			}catch(NumberFormatException e){
 				System.out.println("Ugyldig indtastning");
 				continue;
 			}
-			
+
 			System.out.print("Indtast adgangskode: ");
 			password = sc.nextLine();			
 			if(!lm.correctUserPassword(id, password)){
@@ -96,144 +96,144 @@ public class Weight{
 							printmenu(odao, id);
 							continue;
 						}
-							nextRaavare = rm.getNextRaavare(batchNumber);
-							if(nextRaavare == -1){
-								indtDisp = "Dette produktbatch er allerede færdigt eller eksisterer ikke";
-								printmenu(odao, id);
-							}else{
-								ProduktBatchDTO pb = new ProduktBatchDTO();
-								pb = pbdao.getProduktBatch(batchNumber);
-								pb.setStatus(1);
-								pbdao.updateProduktBatch(pb);
+						nextRaavare = rm.getNextRaavare(batchNumber);
+						if(nextRaavare == -1){
+							indtDisp = "Dette produktbatch er allerede færdigt eller eksisterer ikke";
+							printmenu(odao, id);
+						}else{
+							ProduktBatchDTO pb = new ProduktBatchDTO();
+							pb = pbdao.getProduktBatch(batchNumber);
+							pb.setStatus(1);
+							pbdao.updateProduktBatch(pb);
 
-								indtDisp = "Sæt en beholder på vægten og herefter tarer for at fortsætte";
-								extraDisp = "Recept der skal produceres: " + receptdao.getRecept(pbdao.getProduktBatch(batchNumber).getReceptId()).getReceptName();
-								printmenu(odao, id);
-								measured = false;
+							indtDisp = "Sæt en beholder på vægten og herefter tarer for at fortsætte";
+							extraDisp = "Recept der skal produceres: " + receptdao.getRecept(pbdao.getProduktBatch(batchNumber).getReceptId()).getReceptName();
+							printmenu(odao, id);
+							measured = false;
 
-								//First RM20 loop listening weight/resetting of the scale
-								while(loop2){
-									inline=sc.nextLine().toUpperCase();
-									if(inline.startsWith("B")){
-										try{
-											String temp = inline.substring(2,inline.length());
-											brutto = Double.parseDouble(temp);
-										}catch(StringIndexOutOfBoundsException e){
-											brutto = 0;
-										}catch(NumberFormatException e){
-											indtDisp = "Forkert vægtinput";
-										}
-										printmenu(odao, id);
-									}else if (inline.startsWith("T")){
+							//First RM20 loop listening weight/resetting of the scale
+							while(loop2){
+								inline=sc.nextLine().toUpperCase();
+								if(inline.startsWith("B")){
+									try{
+										String temp = inline.substring(2,inline.length());
+										brutto = Double.parseDouble(temp);
+									}catch(StringIndexOutOfBoundsException e){
+										brutto = 0;
+									}catch(NumberFormatException e){
+										indtDisp = "Forkert vægtinput";
+									}
+									printmenu(odao, id);
+								}else if (inline.startsWith("T")){
 
-										tara=brutto;
-										indtDisp = "Indtast raavarebatchnummer for " + raavaredao.getRaavare(nextRaavare).getrName() + ", med id: " + nextRaavare;
-										extraDisp = "Første råvare: " + raavaredao.getRaavare(nextRaavare).getrName();
-										printmenu(odao, id);
+									tara=brutto;
+									indtDisp = "Indtast raavarebatchnummer for " + raavaredao.getRaavare(nextRaavare).getrName() + ", med id: " + nextRaavare;
+									extraDisp = "Første råvare: " + raavaredao.getRaavare(nextRaavare).getrName();
+									printmenu(odao, id);
 
 
-										int raavareBatch = 0;
-										boolean correctRV = false;
-										while(!correctRV){
-											raavareBatch = rm.measureMethod(sc, nextRaavare);
-											if(raavareBatch>0){
-												correctRV = true;
-											}else if(raavareBatch==-1){
-												extraDisp = "Det indtastede er ikke et raavarebatchnummer";
-												printmenu(odao, id);
-												continue;
-											}else if(raavareBatch==-2){
-												extraDisp = "Det indtastede raavarebatchnummer består ikke af " + raavaredao.getRaavare(nextRaavare).getrName();
-												printmenu(odao, id);
-												continue;
-											}else if(raavareBatch==-3){
-												extraDisp = "Det indtastede råvarebatchnummer findes ikke i systemet";
-												printmenu(odao, id);
-												continue;
-											}
-										}
-
-										double raavareNom;
-										double raavareTol;
-										int receptID;
-										String raavareNavn;
-
-										receptID = pbdao.getProduktBatch(batchNumber).getReceptId();
-										raavareNavn = raavaredao.getRaavare(nextRaavare).getrName();
-										raavareNom = receptdao.getReceptKomp(receptID, nextRaavare).getNom_netto();
-										raavareTol = receptdao.getReceptKomp(receptID, nextRaavare).getTolerance();
-
-										indtDisp = "Sæt "+ raavareNom + "kg " + raavareNavn + " på vægten. Må kun have en tolerance på " + raavareTol;
-										extraDisp = "Første råvare: " + raavaredao.getRaavare(nextRaavare).getrName();
-										
-
-										//Second RM20 loop where the actual object gets put on the weight
-										while(loop3){
-											indtDisp = "Sæt "+ raavareNom + " kg " + raavareNavn + " på vægten. Må kun have en tolerance på " + raavareTol;
+									int raavareBatch = 0;
+									boolean correctRV = false;
+									while(!correctRV){
+										raavareBatch = rm.measureMethod(sc, nextRaavare);
+										if(raavareBatch>0){
+											correctRV = true;
+										}else if(raavareBatch==-1){
+											extraDisp = "Det indtastede er ikke et raavarebatchnummer";
 											printmenu(odao, id);
-											inline=sc.nextLine().toUpperCase();
-											if(inline.startsWith("B")){
-												try{
-													String temp = inline.substring(2,inline.length());
-													brutto += Double.parseDouble(temp);
-												}catch(StringIndexOutOfBoundsException e){
-													System.out.println("Error in second RM20 loop");
-												}catch(NumberFormatException e){
-													indtDisp = "Forkert vægtinput, prøv igen";
-													printmenu(odao, id);
-													continue;
-												}
+											continue;
+										}else if(raavareBatch==-2){
+											extraDisp = "Det indtastede raavarebatchnummer består ikke af " + raavaredao.getRaavare(nextRaavare).getrName();
+											printmenu(odao, id);
+											continue;
+										}else if(raavareBatch==-3){
+											extraDisp = "Det indtastede råvarebatchnummer findes ikke i systemet";
+											printmenu(odao, id);
+											continue;
+										}
+									}
+
+									double raavareNom;
+									double raavareTol;
+									int receptID;
+									String raavareNavn;
+
+									receptID = pbdao.getProduktBatch(batchNumber).getReceptId();
+									raavareNavn = raavaredao.getRaavare(nextRaavare).getrName();
+									raavareNom = receptdao.getReceptKomp(receptID, nextRaavare).getNom_netto();
+									raavareTol = receptdao.getReceptKomp(receptID, nextRaavare).getTolerance();
+
+									indtDisp = "Sæt "+ raavareNom + "kg " + raavareNavn + " på vægten. Må kun have en tolerance på " + raavareTol;
+									extraDisp = "Første råvare: " + raavaredao.getRaavare(nextRaavare).getrName();
+
+
+									//Second RM20 loop where the actual object gets put on the weight
+									while(loop3){
+										indtDisp = "Sæt "+ raavareNom + " kg " + raavareNavn + " på vægten. Må kun have en tolerance på " + raavareTol;
+										printmenu(odao, id);
+										inline=sc.nextLine().toUpperCase();
+										if(inline.startsWith("B")){
+											try{
+												String temp = inline.substring(2,inline.length());
+												brutto += Double.parseDouble(temp);
+											}catch(StringIndexOutOfBoundsException e){
+												System.out.println("Error in second RM20 loop");
+											}catch(NumberFormatException e){
+												indtDisp = "Forkert vægtinput, prøv igen";
 												printmenu(odao, id);
-											}else if (inline.startsWith("S")){
-												if (brutto-tara <= raavareNom+raavareTol && brutto-tara >= raavareNom-raavareTol){
+												continue;
+											}
+											printmenu(odao, id);
+										}else if (inline.startsWith("S")){
+											if (brutto-tara <= raavareNom+raavareTol && brutto-tara >= raavareNom-raavareTol){
 
 
-													ProduktBatchKomponentDTO pbkDTO = new ProduktBatchKomponentDTO();
-													pbkDTO.setPbId(batchNumber);
-													pbkDTO.setRbId(raavareBatch);
-													pbkDTO.setOprId(id);
-													pbkDTO.setTara(tara);
-													pbkDTO.setNetto(brutto-tara);
-													pbdao.createProduktBatchKomponent(pbkDTO);
+												ProduktBatchKomponentDTO pbkDTO = new ProduktBatchKomponentDTO();
+												pbkDTO.setPbId(batchNumber);
+												pbkDTO.setRbId(raavareBatch);
+												pbkDTO.setOprId(id);
+												pbkDTO.setTara(tara);
+												pbkDTO.setNetto(brutto-tara);
+												pbdao.createProduktBatchKomponent(pbkDTO);
 
-													double amount;
-													RaavareBatchDTO rbDTO = new RaavareBatchDTO();
-													rbDTO = rbdao.getRaavareBatch(raavareBatch);
-													amount = rbDTO.getMaengde();
-													rbDTO.setMaengde(amount-brutto);
-													rbdao.updateRaavareBatch(rbDTO);
-													indtDisp = "";
-													extraDisp = "Din måling er nu registreret";
-													brutto = 0;
-													tara = 0;
-													printmenu(odao, id);
-													measured = true;
-													break;
+												double amount;
+												RaavareBatchDTO rbDTO = new RaavareBatchDTO();
+												rbDTO = rbdao.getRaavareBatch(raavareBatch);
+												amount = rbDTO.getMaengde();
+												rbDTO.setMaengde(amount-brutto);
+												rbdao.updateRaavareBatch(rbDTO);
+												indtDisp = "";
+												extraDisp = "Din måling er nu registreret";
+												brutto = 0;
+												tara = 0;
+												printmenu(odao, id);
+												measured = true;
+												break;
 
-												}else{
-													indtDisp = "Maalingen ligger ikke inden for tolerancen, prøv igen";
-													brutto = tara;
-													printmenu(odao, id);
-												}
 											}else{
-												extraDisp="Ikke et gyldigt input";
+												indtDisp = "Maalingen ligger ikke inden for tolerancen, prøv igen";
+												brutto = tara;
 												printmenu(odao, id);
 											}
-											//End of loop3
+										}else{
+											extraDisp="Ikke et gyldigt input";
+											printmenu(odao, id);
 										}
-									}else{
-										extraDisp="Ikke et gyldigt input";
-										printmenu(odao, id);
+										//End of loop3
 									}
-									if(measured){
-										break;
-									}
-									//End of loop2
+								}else{
+									extraDisp="Ikke et gyldigt input";
+									printmenu(odao, id);
 								}
-
+								if(measured){
+									break;
+								}
+								//End of loop2
 							}
-							batchCheck = false;
-						
+
+						}
+						batchCheck = false;
+
 					}printmenu(odao, id);
 				}else if(inline.startsWith("D")){
 					if(inline.equals("DW"))
