@@ -23,7 +23,7 @@ public class Weight{
 	static DataOutputStream outstream;
 	static int batchNumber;
 	static int id;
-	static int nextRaavare;;
+	static int nextRaavare;
 
 	static Scanner sc = new Scanner(System.in);
 
@@ -61,6 +61,7 @@ public class Weight{
 				inline=sc.nextLine().toUpperCase();
 				if(inline.startsWith("RM")){
 					//TODO this 
+					
 				}else if(inline.startsWith("D")){
 					if(inline.equals("DW")){
 						indtDisp="";
@@ -71,11 +72,13 @@ public class Weight{
 					outstream.writeBytes("DB"+"\r\n");
 				}
 				else if(inline.startsWith("T")){
+					outstream.writeBytes("T S " + (tara) + " kg "+"\r\n");	
 					tara=brutto;
 					printmenu();
 				}
 				else if(inline.startsWith("S")){
 					printmenu();
+					outstream.writeBytes("S S " + (brutto-tara)+ " kg "  +"\r\n");
 				}
 				else if(inline.startsWith("B")){//denne ordre findes ikke på en fysisk vægt
 					try{
@@ -87,12 +90,15 @@ public class Weight{
 						indtDisp = "Forkert vægtinput";
 					}
 					printmenu();
+					 outstream.writeBytes("DB"+"\r\n");
 				}
 				else if((inline.startsWith("Q"))){
 					System.out.println("");
 					System.out.println("Program stoppet Q modtaget på com port");
 					System.in.close();
 					System.out.close();
+					instream.close();
+					outstream.close();
 					sc.close();;
 					System.exit(0);
 
