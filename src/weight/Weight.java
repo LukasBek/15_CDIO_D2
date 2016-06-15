@@ -65,7 +65,7 @@ public class Weight{
 					outstream.writeBytes("RM20A"+"\r\n");
 					printmenu();
 					rmReturn = sc.nextLine();
-					outstream.writeBytes("RM20B "+ rmReturn + "\r\n");
+					outstream.writeBytes("RM20B "+ rmReturn +  "\r\n");
 					
 				}else if(inline.startsWith("D")){
 					if(inline.equals("DW")){
@@ -132,6 +132,7 @@ public class Weight{
 		System.out.println("Hooked up to "+sock.getInetAddress() );
 		System.out.println("Brutto: "+(brutto)+" kg" );
 		System.out.println("Streng modtaget: "+inline) ;
+		System.out.println("For at taste 'ok' tryk enter");
 		System.out.println(" ");
 		System.out.println("Denne vægt simulator lytter på ordrene ");
 		System.out.println("S, T, D 'TEST', DW, RM20, B og Q ");
