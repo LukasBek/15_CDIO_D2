@@ -14,6 +14,7 @@ public class Weight{
 	static double brutto=0;
 	static double tara = 0;
 	static String inline;
+	static String rmReturn;
 	static String indtDisp ="";
 	static int portdst = 8000;
 	static int portnumber;
@@ -60,7 +61,11 @@ public class Weight{
 			while(!(inline=instream.readLine().toUpperCase()).isEmpty()){//her ventes på input
 				inline=sc.nextLine().toUpperCase();
 				if(inline.startsWith("RM")){
-					//TODO this 
+					indtDisp = inline.substring(3);
+					outstream.writeBytes("RM20A"+"\r\n");
+					printmenu();
+					rmReturn = sc.nextLine();
+					outstream.writeBytes("RM20B "+ rmReturn + "\r\n");
 					
 				}else if(inline.startsWith("D")){
 					if(inline.equals("DW")){
@@ -71,11 +76,7 @@ public class Weight{
 					printmenu();
 					outstream.writeBytes("DB"+"\r\n");
 				}
-				else if(inline.startsWith("T")){
-					outstream.writeBytes("T S " + (tara) + " kg "+"\r\n");	
-					tara=brutto;
-					printmenu();
-				}
+				
 				else if(inline.startsWith("S")){
 					printmenu();
 					outstream.writeBytes("S S " + (brutto-tara)+ " kg "  +"\r\n");
