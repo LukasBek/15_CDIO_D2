@@ -57,10 +57,8 @@ public class Weight{
 
 		try{
 			printmenu();
-			System.out.println("Vaegt1");
 			//Main while loop which listens to the first user input from the ASE
 			while(!(inline=instream.readLine().toUpperCase()).isEmpty()){//her ventes på input
-				System.out.println("Vaegt2");
 				if(inline.startsWith("RM")){
 					indtDisp = inline.substring(3).toLowerCase();
 					outstream.writeBytes("RM20A"+"\r\n");
