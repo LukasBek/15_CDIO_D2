@@ -57,14 +57,18 @@ public class Weight{
 
 		try{
 			printmenu();
+			System.out.println("Vaegt1");
 			//Main while loop which listens to the first user input from the ASE
 			while(!(inline=instream.readLine().toUpperCase()).isEmpty()){//her ventes på input
-				inline=sc.nextLine().toUpperCase();
+				System.out.println("Vaegt2");
 				if(inline.startsWith("RM")){
-					indtDisp = inline.substring(3);
+					indtDisp = inline.substring(3).toLowerCase();
 					outstream.writeBytes("RM20A"+"\r\n");
 					printmenu();
 					rmReturn = sc.nextLine();
+					if(rmReturn == null){
+						rmReturn = "";
+					}
 					outstream.writeBytes("RM20B "+ rmReturn +  "\r\n");
 					
 				}else if(inline.startsWith("D")){
@@ -75,12 +79,16 @@ public class Weight{
 					}
 					printmenu();
 					outstream.writeBytes("DB"+"\r\n");
-				}
-				
+				} else if (inline.startsWith("T")){
+                    outstream.writeBytes("T S " + (tara) + "\r\n");		//HVOR MANGE SPACE?
+                    tara=brutto;
+                    printmenu();
+                }				
 				else if(inline.startsWith("S")){
 					printmenu();
 					outstream.writeBytes("S S " + (brutto-tara)+ " kg "  +"\r\n");
 				}
+				
 				else if(inline.startsWith("B")){//denne ordre findes ikke på en fysisk vægt
 					try{
 						String temp = inline.substring(2,inline.length());
@@ -93,6 +101,7 @@ public class Weight{
 					printmenu();
 					 outstream.writeBytes("DB"+"\r\n");
 				}
+				
 				else if((inline.startsWith("Q"))){
 					System.out.println("");
 					System.out.println("Program stoppet Q modtaget på com port");
