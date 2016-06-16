@@ -70,6 +70,7 @@ public class Weight{
 						rmReturn = "";
 					}
 					outstream.writeBytes("RM20B "+ rmReturn +  "\r\n");
+					outstream.flush();
 					
 				}else if(inline.startsWith("D")){
 					if(inline.equals("DW")){
@@ -79,6 +80,7 @@ public class Weight{
 					}
 					printmenu();
 					outstream.writeBytes("DB"+"\r\n");
+					
 				} else if (inline.startsWith("T")){
                     outstream.writeBytes("T S " + (tara) + "\r\n");		//HVOR MANGE SPACE?
                     tara=brutto;
@@ -86,13 +88,15 @@ public class Weight{
                 }				
 				else if(inline.startsWith("S")){
 					printmenu();
-					outstream.writeBytes("S S " + (brutto-tara)+ " kg "  +"\r\n");
+					outstream.writeBytes("S S " + (brutto-tara)+"\r\n");
+					System.out.println("Brutto - tara: " + brutto + " - " + tara);
+					outstream.flush();
 				}
 				
 				else if(inline.startsWith("B")){//denne ordre findes ikke på en fysisk vægt
 					try{
 						String temp = inline.substring(2,inline.length());
-						brutto = Double.parseDouble(temp);
+						brutto = brutto + Double.parseDouble(temp);
 					}catch(StringIndexOutOfBoundsException e){
 						brutto = 0;
 					}catch(NumberFormatException e){
