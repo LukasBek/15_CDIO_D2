@@ -149,13 +149,6 @@ public class Weight{
 		System.out.println("S, T, D 'TEST', DW, RM20, B og Q ");
 		System.out.println("på kommunikation sporten. ");
 		System.out.println("******") ;
-		System.out.println("Tast RM for at lave RM20-ordren");
-		System.out.println("Tast D efterfulgt af en besked til displayet");
-		System.out.println("Tast DW for at rense displayet");
-		System.out.println("Tast T for tara (svarende til knap tryk på vægt)");
-		System.out.println("Tast S for at veje objektet");
-		System.out.println("Tast B efterfulgt af en vægt for ny brutto (svarende til at belastningen på vægt ændres)");
-		System.out.println("Tast Q for at afslutte program program");
 		System.out.print  ("Tast her:");
 
 	}
